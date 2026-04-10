@@ -322,6 +322,16 @@ int main(int argc, char* argv[]) {
     Ort::Env* env = new Ort::Env(ORT_LOGGING_LEVEL_ERROR, "UltraLightFace");
     Ort::SessionOptions session_options;
 
+    // 1. Activar todas las optimizaciones matemáticas posibles en el modelo
+    session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+
+    // 2. Limitar los hilos al número de núcleos reales de la placa (2 núcleos)
+    // Si pones más, el procesador pierde tiempo cambiando entre tareas (Context Switch)
+    session_options.SetIntraOpNumThreads(2);
+
+    // 3. Forzar ejecución secuencial interna para no saturar la caché del ARM
+    //session_options.SetExecutionMode(ExecutionMode::ORT_SEQUENTIAL);
+
     std::cout << "Iniciamos onnx" << std::endl;
     Ort::CustomOpDomain custom_domain("com.mycompany.fpga");
     std::cout << "Cargamos modelo" << std::endl;
