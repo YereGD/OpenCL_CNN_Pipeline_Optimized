@@ -343,12 +343,12 @@ int main(int argc, char* argv[]) {
     // Con CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE los comandos de distintos slots
     // pueden ejecutarse en paralelo. La serialización ahora la gestionamos
     // explícitamente mediante los eventos prev_map_in/out guardados en cada slot.
-    cl_command_queue_properties props = CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE;
-    queue_read  = clCreateCommandQueue(context, device, props, &status);
-    queue_conv  = clCreateCommandQueue(context, device, props, &status);
-    queue_conv2 = clCreateCommandQueue(context, device, props, &status);
-    queue_conv3 = clCreateCommandQueue(context, device, props, &status);
-    queue_write = clCreateCommandQueue(context, device, props, &status);
+    const cl_queue_properties props[] = {CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, 0};
+    queue_read  = clCreateCommandQueueWithProperties(context, device, props, &status);
+    queue_conv  = clCreateCommandQueueWithProperties(context, device, props, &status);
+    queue_conv2 = clCreateCommandQueueWithProperties(context, device, props, &status);
+    queue_conv3 = clCreateCommandQueueWithProperties(context, device, props, &status);
+    queue_write = clCreateCommandQueueWithProperties(context, device, props, &status);
     check_error(status, "clCreateCommandQueue");
  
     std::cout << "Cargando archivo binario .aocx..." << std::endl;
