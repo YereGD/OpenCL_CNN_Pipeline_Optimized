@@ -321,7 +321,11 @@ int main(int argc, char* argv[]) {
 
     Ort::Env* env = new Ort::Env(ORT_LOGGING_LEVEL_ERROR, "UltraLightFace");
     Ort::SessionOptions session_options;
-
+    session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+    /*
+    bool enable_fast_math = true;
+    Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_ACL(&session_options, enable_fast_math));
+    */
     std::cout << "Iniciamos onnx" << std::endl;
     Ort::CustomOpDomain custom_domain("com.mycompany.fpga");
     std::cout << "Cargamos modelo" << std::endl;
