@@ -1,0 +1,1 @@
+Compiler Command: aoc -march=emulator -board=de10_nano_sharedonly -board-package=/home/yere-tft/Escritorio/de10_nano pipeconv.cl

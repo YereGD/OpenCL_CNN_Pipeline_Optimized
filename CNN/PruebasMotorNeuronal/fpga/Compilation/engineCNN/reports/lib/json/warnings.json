@@ -1,0 +1,35 @@
+{"rows":[
+{"name":"Local memory replication disabled", "data":[1], "details":["Local memory replication was disabled due to estimated overutilization of RAM blocks."]}
+,{"name":"Cannot unroll loop for.cond14.preheader in mem_read_generic because of conditional..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond14.preheader in mem_read_generic because of conditional channel execution"]}
+,{"name":"Cannot unroll loop for.cond17.preheader in mem_read_generic because of conditional..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond17.preheader in mem_read_generic because of conditional channel execution"]}
+,{"name":"Cannot unroll loop for.cond20.preheader in mem_read_generic because of conditional..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond20.preheader in mem_read_generic because of conditional channel execution"]}
+,{"name":"Cannot unroll loop for.body22 in mem_read_generic because of conditional channel e..."
+,"details":["Compiler Warning: Cannot unroll loop for.body22 in mem_read_generic because of conditional channel execution"]}
+,{"name":"Cannot partially unroll loop for.body40 in mem_read_generic because of channel rea..."
+,"details":["Compiler Warning: Cannot partially unroll loop for.body40 in mem_read_generic because of channel reads or writes"]}
+,{"name":"Cannot unroll loop for.cond46.preheader in conv_generic because of conditional cha..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond46.preheader in conv_generic because of conditional channel execution"]}
+,{"name":"Cannot unroll loop for.cond46.preheader in conv_generic because of conditional cha..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond46.preheader in conv_generic because of conditional channel execution"]}
+,{"name":"Cannot unroll loop for.body48 in conv_generic because of conditional channel execu..."
+,"details":["Compiler Warning: Cannot unroll loop for.body48 in conv_generic because of conditional channel execution"]}
+,{"name":"Cannot unroll loop for.body48 in conv_generic because of conditional channel execu..."
+,"details":["Compiler Warning: Cannot unroll loop for.body48 in conv_generic because of conditional channel execution"]}
+,{"name":"Cannot partially unroll loop for.body106 in conv_generic because of channel reads ..."
+,"details":["Compiler Warning: Cannot partially unroll loop for.body106 in conv_generic because of channel reads or writes"]}
+,{"name":"Cannot unroll loop for.cond61.preheader in conv_generic because of conditional cha..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond61.preheader in conv_generic because of conditional channel execution"]}
+,{"name":"Cannot unroll loop for.cond64.preheader in conv_generic because of conditional cha..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond64.preheader in conv_generic because of conditional channel execution"]}
+,{"name":"Cannot partially unroll loop for.body66 in conv_generic because of channel reads o..."
+,"details":["Compiler Warning: Cannot partially unroll loop for.body66 in conv_generic because of channel reads or writes"]}
+,{"name":"Cannot unroll loop for.cond14.preheader in mem_write_generic because of conditiona..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond14.preheader in mem_write_generic because of conditional channel execution"]}
+,{"name":"Cannot unroll loop for.cond17.preheader in mem_write_generic because of conditiona..."
+,"details":["Compiler Warning: Cannot unroll loop for.cond17.preheader in mem_write_generic because of conditional channel execution"]}
+,{"name":"Cannot partially unroll loop for.body19 in mem_write_generic because of channel re..."
+,"details":["Compiler Warning: Cannot partially unroll loop for.body19 in mem_write_generic because of channel reads or writes"]}
+]}
