@@ -1,0 +1,1231 @@
+<KERNEL_LIST>
+	<PROGRAM_GLOBAL_MEM_SIZE value="0" />
+	<KERNEL_BUNDLE name="conv_generic" compute_units="1">
+	<KERNEL name="conv_generic" filename="kernel_hdl/conv_generic/conv_generic_function_wrapper.vhd" version="1" cosim_name="conv_generic" enable_global_profiling="1" workgroup_invariant="0" has_global_atomics="0" num_vector_lanes="1" num_profiling_signals="0" arbitration_latency="5" kernel_side_mem_latency="8">
+		<RESOURCE_INFO>
+			<ID value="1" />
+			<LOCAL_MEM aspace="5" begin="0" next="262144" banks="1" width="8" static_demand="147456" num_groups="1" has_atomics="0" ports="2" write_ports="2" rdw_mode="0" repl_fac="1" ic_req_latency="0" ic_rrp_latency="0" ic_wrp_latency="0" req_pipe_interval="0" ret_fanout="0" num_ports_per_phys_mem="2" phys_mem_latency="3" maximum_depth="0" enable="0" ram_mode="1" preferred_width="160" use_mif_file="0">
+				<BANK id="0">
+					<PORT id="0" register="0" />
+					<PORT id="1" register="0" />
+				</BANK>
+			</LOCAL_MEM>
+			<AGGREGATE_STATIC_LOCAL_MEM_SIZE value="147456" />
+			<MAX_WORK_GROUP_SIZE value="1" />
+			<REQUIRED_WORK_GROUP_SIZE x="1" y="1" z="1" />
+			<MAX_GLOBAL_WORK_DIM value="0" />
+		</RESOURCE_INFO>
+		<CONFIGURATION>
+			<INTERFACE port="clock_reset" type="clock"/>
+			<INTERFACE port="cra_irq" type="irq"/>
+			<INTERFACE port="cra" type="slave" cosim_name="" width="64" size="256" latency="0" />
+		</CONFIGURATION>
+		<REQUIREMENTS>
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/linux64/lib/dspba/Libraries/vhdl/base/dspba_library_package.vhd" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/linux64/lib/dspba/Libraries/vhdl/base/dspba_library.vhd" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_data_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_ll_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_ll_ram_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_valid_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_dspba_valid_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_staging_reg.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/hld_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/hld_fifo_zero_width.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_high_speed_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_low_latency_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_zero_latency_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fanout_pipeline.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_std_synchronizer_nocut.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_tessellated_incr_decr_threshold.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_tessellated_incr_lookahead.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_reset_handler.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_lfsr.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_pop.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_pipeline.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_push.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_dspba_buffer.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_token_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_full_detector.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_top.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_permute_address.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_pipelined.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_enabled.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_basic_coalescer.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_simple.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_streaming.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_master.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_bursting_load_stores.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_non_aligned_write.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_read_cache.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_atomic.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_prefetch_block.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_wide_wrapper.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_streaming_prefetch.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_aligned_burst_coalesced_lsu.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_toggle_detect.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_debug_mem.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_coalesced_pipelined_write.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_coalesced_pipelined_read.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fifo_stall_valid_lookahead.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_ffwdsrc.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/st_top.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_loop_limiter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_clock2x_holder.v" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_function_wrapper.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_function.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B10.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B10_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B10_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B10_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_body66_conv_generic_c0_enteA0Z394_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body66_conv_generiA0Z_conv_generic624.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body66_conv_generiA0Zric864_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body66_conv_generiA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_body66_conv_generic_cA0Z_conv_generic477.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going219_conv_generic489.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_forked267283_pop80_conv_generic479.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_forked268280_pop77_conv_generic481.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_notexit250284_pop82_conv_generic497.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_notexit254282_pop79_conv_generic501.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop75_conv_generic608.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop76_conv_generic612.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop78_conv_generic616.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop81_conv_generic620.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_w_idx_44_pop72_conv_generic533.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i33_fpgaindvars_iv_in_pop66_conv_generic483.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i4_cleanups222_pop74_conv_generic485.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i4_initerations217_pop73_conv_generic505.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_forked267283_push80_conv_generic491.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_forked268280_push77_conv_generic493.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_lastiniteration221_conv_generic512.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexit250284_push82_conv_generic499.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexit254282_push79_conv_generic503.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond229_conv_generic603.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push75_conv_generic610.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push76_conv_generic614.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push78_conv_generic618.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push81_conv_generic622.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_w_idx_44_push72_conv_generic599.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i33_fpgaindvars_iv_in_push66_conv_generic495.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i4_cleanups222_push74_conv_generic606.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i4_initerations217_push73_conv_generic508.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_h_sync_buffer124_conv_generic514.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_in_c_sync_buffer128_conv_generic529.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_pad_sync_buffer155_conv_generic516.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_stride_sync_buffer149_conv_generic519.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer131_conv_generic536.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer132_conv_generic540.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer133_conv_generic544.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer134_conv_generic548.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer135_conv_generic552.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer136_conv_generic556.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer137_conv_generic560.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer138_conv_generic564.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer139_conv_generic568.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer140_conv_generic572.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer141_conv_generic576.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer142_conv_generic580.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer143_conv_generic584.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer144_conv_generic588.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer145_conv_generic592.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer146_conv_generic596.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_w_sync_buffer119_conv_generic524.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c1_for_body66_conv_generic_c1_enteA0Z426_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c1_for_body66_conv_generiA0Z_conv_generic727.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c1_for_body66_conv_generiA0Zric866_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c1_for_body66_conv_generiA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c1_for_body66_conv_generic_cA0Z_conv_generic658.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop68_conv_generic719.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop69_conv_generic713.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop70_conv_generic707.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop71_conv_generic701.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i512_acc_pm_4_pop67_conv_generic664.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push68_conv_generic725.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push69_conv_generic717.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push70_conv_generic711.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push71_conv_generic705.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i512_acc_pm_4_push67_conv_generic723.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_w_zero_sync_buffer_conv_generic662.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_x_zero_sync_buffer_conv_generic660.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_iord_bl_ch_in_unnamed_conv_generic49_conv_generic625.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic50_conv_generic626.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic50_conv_generic2.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic51_conv_generic628.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic51_conv_generic3.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic52_conv_generic630.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic52_conv_generic4.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic53_conv_generic632.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic53_conv_generic5.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic54_conv_generic634.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic54_conv_generic6.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic55_conv_generic636.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic55_conv_generic7.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic56_conv_generic638.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic56_conv_generic8.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic57_conv_generic640.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic57_conv_generic9.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic58_conv_generic642.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic58_conv_generic10.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic59_conv_generic644.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic59_conv_generic11.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic60_conv_generic646.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic60_conv_generic12.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic61_conv_generic648.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic61_conv_generic13.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic62_conv_generic650.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic62_conv_generic14.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic63_conv_generic652.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic63_conv_generic15.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic64_conv_generic654.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic64_conv_generic16.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic65_conv_generic656.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic65_conv_generic17.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B10_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B10_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B11.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B11_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B11_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B11_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B11_sr_0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B12_sr_0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B13.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B13_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B13_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B13_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_body106_conv_generic_c0_entA0Z440_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body106_conv_generA0Z_conv_generic814.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body106_conv_generA0Zric868_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body106_conv_generA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_body106_conv_generic_A0Z_conv_generic728.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going256_conv_generic730.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_cmp10414_rm277_pop54_conv_generic789.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop51_conv_generic806.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop52_conv_generic810.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop53_conv_generic787.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_oc102_215_pop50_conv_generic732.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i512_select316278_pop55_conv_generic735.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_cmp10414_rm277_push54_conv_generic798.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond257_conv_generic804.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push51_conv_generic808.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push52_conv_generic812.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push53_conv_generic800.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_oc102_215_push50_conv_generic802.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i512_select316278_push55_conv_generic796.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_acl_286184_conv_generic768.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_0173_conv_generic758.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_10183_conv_generic740.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_11185_conv_generic766.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_1174_conv_generic756.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_12186_conv_generic764.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_13187_conv_generic762.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_14188_conv_generic760.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_2175_conv_generic754.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_3176_conv_generic752.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_4177_conv_generic750.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_5178_conv_generic748.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_6179_conv_generic746.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_7180_conv_generic744.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_8181_conv_generic742.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_reduction_conv_generic_9182_conv_generic738.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_m_mult_sync_buffer_conv_generic771.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_m_shift_sync_buffer156_conv_generic776.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_m_shift_sync_buffer157_conv_generic779.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_m_shift_sync_buffer_conv_generic773.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer130_conv_generic792.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_y_zero_sync_buffer_conv_generic782.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_iowr_bl_ch_out_unnamed_conv_generic69_conv_generic815.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B13_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B13_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B14.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B14_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B14_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B14_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B14_sr_0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B15_sr_0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B16_sr_0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B1_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B2_sr_0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B3_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B4.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B4_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B4_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B4_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_body28_conv_generic_c0_enteA0Z309_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body28_conv_generiA0Z_conv_generic310.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body28_conv_generiA0Zric854_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body28_conv_generiA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_body28_conv_generic_cA0Z_conv_generic272.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going209_conv_generic274.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_brmerge272_pop45_conv_generic289.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_exitcond169274_pop47_conv_generic306.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_add25273_pop46_conv_generic284.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_i_132_pop43_conv_generic282.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_oc18_033_pop40271_pop44_conv_generic276.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i33_fpgaindvars_iv164_pop42_conv_generic280.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_brmerge272_push45_conv_generic296.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_exitcond169274_push47_conv_generic308.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond210_conv_generic304.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_add25273_push46_conv_generic294.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_i_132_push43_conv_generic300.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_oc18_033_pop40271_push44_conv_generic298.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i33_fpgaindvars_iv164_push42_conv_generic302.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_unnamed_conv_generic36_conv_generic278.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_weights_sync_buffer_conv_generic286.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic37_conv_generic311.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic37_conv_generic1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_store_unnamed_conv_generic38_conv_generic313.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B4_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B4_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B5.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B5_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B5_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B5_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B5_sr_0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B6_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B7_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B8_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B9_sr_1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B0_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B0_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_throttle_pop_conv_generic0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_throttle_pop_conv_generic_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B0_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B0_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B1_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B1_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_body_conv_generic_c0_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body_conv_generic_A0Zt_conv_generic47.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body_conv_generic_A0Zric818_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_body_conv_generic_c0_A0Zer_conv_generic2.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going_conv_generic8.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_oc_034_pop36_conv_generic21.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i4_cleanups_pop38_conv_generic4.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i4_initerations_pop37_conv_generic10.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i5_fpgaindvars_iv170_pop19_conv_generic37.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_lastiniteration_conv_generic17.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond_conv_generic40.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_oc_034_push36_conv_generic35.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i4_cleanups_push38_conv_generic43.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i4_initerations_push37_conv_generic13.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i5_fpgaindvars_iv170_push19_conv_generic45.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_b_off_sync_buffer114_conv_generic24.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_b_off_sync_buffer_conv_generic27.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_bias_sync_buffer_conv_generic30.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer_conv_generic19.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c10_for_body_conv_generic_c10_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c10_for_body_conv_genericA0Z_conv_generic115.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c10_for_body_conv_genericA0Zric830_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c10_for_body_conv_genericA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c10_for_body_conv_generic_c1A0Z_conv_generic105.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_5_0_pop25_conv_generic109.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_5_0_push25_conv_generic111.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic11_conv_generic113.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c11_for_body_conv_generic_c11_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c11_for_body_conv_genericA0Z_conv_generic104.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c11_for_body_conv_genericA0Zric828_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c11_for_body_conv_genericA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c11_for_body_conv_generic_c1A0Zr_conv_generic94.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_4_0_pop26_conv_generic98.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_4_0_push26_conv_generic100.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic9_conv_generic102.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c12_for_body_conv_generic_c12_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c12_for_body_conv_genericA0Zt_conv_generic93.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c12_for_body_conv_genericA0Zric826_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c12_for_body_conv_genericA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c12_for_body_conv_generic_c1A0Zr_conv_generic83.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_3_0_pop27_conv_generic87.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_3_0_push27_conv_generic89.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic7_conv_generic91.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c13_for_body_conv_generic_c13_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c13_for_body_conv_genericA0Zt_conv_generic82.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c13_for_body_conv_genericA0Zric824_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c13_for_body_conv_genericA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c13_for_body_conv_generic_c1A0Zr_conv_generic72.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_2_0_pop28_conv_generic76.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_2_0_push28_conv_generic78.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic5_conv_generic80.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c14_for_body_conv_generic_c14_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c14_for_body_conv_genericA0Zt_conv_generic71.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c14_for_body_conv_genericA0Zric822_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c14_for_body_conv_genericA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c14_for_body_conv_generic_c1A0Zr_conv_generic61.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_1_0_pop29_conv_generic65.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_1_0_push29_conv_generic67.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic3_conv_generic69.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c15_for_body_conv_generic_c15_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c15_for_body_conv_genericA0Zt_conv_generic60.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c15_for_body_conv_genericA0Zric820_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c15_for_body_conv_genericA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c15_for_body_conv_generic_c1A0Zr_conv_generic50.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_0_0_pop30_conv_generic54.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_0_0_push30_conv_generic56.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic1_conv_generic58.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c16_for_body_conv_generic_c16_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c16_for_body_conv_genericA0Z_conv_generic227.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c16_for_body_conv_genericA0Zric850_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c16_for_body_conv_genericA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c16_for_body_conv_generic_c1A0Z_conv_generic219.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop31_conv_generic221.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push31_conv_generic223.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic31_conv_generic225.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c1_for_body_conv_generic_c1_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c1_for_body_conv_generic_A0Z_conv_generic218.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c1_for_body_conv_generic_A0Zric848_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c1_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c1_for_body_conv_generic_c1_A0Z_conv_generic207.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop32_conv_generic211.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push32_conv_generic214.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic29_conv_generic216.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c2_for_body_conv_generic_c2_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c2_for_body_conv_generic_A0Z_conv_generic206.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c2_for_body_conv_generic_A0Zric846_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c2_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c2_for_body_conv_generic_c2_A0Z_conv_generic195.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop33_conv_generic199.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push33_conv_generic202.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic27_conv_generic204.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c3_for_body_conv_generic_c3_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c3_for_body_conv_generic_A0Z_conv_generic194.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c3_for_body_conv_generic_A0Zric844_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c3_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c3_for_body_conv_generic_c3_A0Z_conv_generic183.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop34_conv_generic187.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push34_conv_generic190.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic25_conv_generic192.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c4_for_body_conv_generic_c4_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c4_for_body_conv_generic_A0Z_conv_generic182.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c4_for_body_conv_generic_A0Zric842_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c4_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c4_for_body_conv_generic_c4_A0Z_conv_generic171.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_pop35_conv_generic175.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_push35_conv_generic178.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic23_conv_generic180.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c5_for_body_conv_generic_c5_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c5_for_body_conv_generic_A0Z_conv_generic170.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c5_for_body_conv_generic_A0Zric840_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c5_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c5_for_body_conv_generic_c5_A0Z_conv_generic160.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_10_0_pop20_conv_generic164.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_10_0_push20_conv_generic166.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic21_conv_generic168.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c6_for_body_conv_generic_c6_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c6_for_body_conv_generic_A0Z_conv_generic159.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c6_for_body_conv_generic_A0Zric838_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c6_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c6_for_body_conv_generic_c6_A0Z_conv_generic149.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_9_0_pop21_conv_generic153.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_9_0_push21_conv_generic155.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic19_conv_generic157.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c7_for_body_conv_generic_c7_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c7_for_body_conv_generic_A0Z_conv_generic148.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c7_for_body_conv_generic_A0Zric836_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c7_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c7_for_body_conv_generic_c7_A0Z_conv_generic138.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_8_0_pop22_conv_generic142.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_8_0_push22_conv_generic144.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic17_conv_generic146.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c8_for_body_conv_generic_c8_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c8_for_body_conv_generic_A0Z_conv_generic137.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c8_for_body_conv_generic_A0Zric834_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c8_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c8_for_body_conv_generic_c8_A0Z_conv_generic127.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_7_0_pop23_conv_generic131.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_7_0_push23_conv_generic133.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic15_conv_generic135.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c9_for_body_conv_generic_c9_enter_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c9_for_body_conv_generic_A0Z_conv_generic126.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c9_for_body_conv_generic_A0Zric832_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c9_for_body_conv_generic_A0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c9_for_body_conv_generic_c9_A0Z_conv_generic116.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_local_bias_6_0_pop24_conv_generic120.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_local_bias_6_0_push24_conv_generic122.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic13_conv_generic124.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_load_unnamed_conv_generic0_conv_generic48.vhd" />
+			<FILE name="kernel_hdl/conv_generic/readdata_reg_unnamed_conv_generic0_conv_generic0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B1_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B1_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B12.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B12_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B12_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B12_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B15.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B15_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B15_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B15_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B16.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B16_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_throttle_push_conv_generic816.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_throttle_push_conv_generic_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B16_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B16_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B2.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B2_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic33_conv_generic241.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic34_conv_generic243.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_src_unnamed_conv_generic35_conv_generic245.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_in_c_sync_buffer125_conv_generic232.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_in_c_sync_buffer126_conv_generic228.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B2_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B2_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B3.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B3_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B3_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_body21_conv_generic_c0_enteA0Z295_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body21_conv_generiA0Z_conv_generic271.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body21_conv_generiA0Zric852_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body21_conv_generiA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_body21_conv_generic_cA0Z_conv_generic247.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going213_conv_generic249.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_oc18_033_pop40_conv_generic253.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i5_fpgaindvars_iv167_pop39_conv_generic262.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond214_conv_generic267.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_oc18_033_push40_conv_generic265.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i5_fpgaindvars_iv167_push39_conv_generic269.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_cmp2731_not190_conv_generic256.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_ffwd_dst_mul17_add62189_conv_generic258.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_tile_channels_sync_buffer129_conv_generic251.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_w_off_sync_buffer_conv_generic260.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B3_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B3_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B6.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B6_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B6_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_cond46_preheader_conv_generA0Z325_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond46_preheader_cA0Z_conv_generic338.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond46_preheader_cA0Zric856_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond46_preheader_cA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_cond46_preheader_convA0Z_conv_generic315.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going264_conv_generic317.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_oy_026_pop41_conv_generic328.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond265_conv_generic336.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_oy_026_push41_conv_generic334.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_h_sync_buffer_conv_generic319.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_pad_sync_buffer_conv_generic321.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_stride_sync_buffer_conv_generic324.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B6_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B6_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B7.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B7_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B7_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_body48_conv_generic_c0_enteA0Z334_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body48_conv_generiA0Z_conv_generic374.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body48_conv_generiA0Zric858_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_body48_conv_generiA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_body48_conv_generic_cA0Z_conv_generic339.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going260_conv_generic341.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop49_conv_generic370.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_ox_118_pop48_conv_generic362.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond261_conv_generic368.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push49_conv_generic372.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_ox_118_push48_conv_generic366.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_h_sync_buffer120_conv_generic343.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_pad_sync_buffer150_conv_generic353.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_pad_sync_buffer151_conv_generic345.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_stride_sync_buffer147_conv_generic356.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_w_sync_buffer115_conv_generic348.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_w_sync_buffer_conv_generic359.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B7_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B7_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B8.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B8_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B8_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_cond61_preheader_conv_generA0Z347_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond61_preheader_cA0Z_conv_generic405.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond61_preheader_cA0Zric860_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond61_preheader_cA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_cond61_preheader_convA0Z_conv_generic375.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going252_conv_generic377.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop57_conv_generic397.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop58_conv_generic401.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i3_fpgaindvars_iv161_pop56_conv_generic389.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond253_conv_generic395.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push57_conv_generic399.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push58_conv_generic403.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i3_fpgaindvars_iv161_push56_conv_generic393.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_h_sync_buffer121_conv_generic379.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_pad_sync_buffer152_conv_generic381.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_w_sync_buffer116_conv_generic384.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B8_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B8_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B9.vhd" />
+			<FILE name="kernel_hdl/conv_generic/bb_conv_generic_B9_stall_region.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B9_merge_reg.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_c0_for_cond64_preheader_conv_generA0Z365_conv_generic.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond64_preheader_cA0Z_conv_generic476.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond64_preheader_cA0Zric862_data_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_sfc_exit_c0_for_cond64_preheader_cA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_sfc_logic_c0_for_cond64_preheader_convA0Z_conv_generic406.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going248_conv_generic410.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_forked268279_pop63_conv_generic408.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_notexit254281_pop65_conv_generic432.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop61_conv_generic464.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop62_conv_generic468.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i1_pop64_conv_generic472.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i32_w_idx_38_pop60_conv_generic458.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pop_i3_fpgaindvars_iv158_pop59_conv_generic424.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_forked268279_push63_conv_generic428.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexit254281_push65_conv_generic434.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_notexitcond249_conv_generic436.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push61_conv_generic466.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push62_conv_generic470.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i1_push64_conv_generic474.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i32_w_idx_38_push60_conv_generic460.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_push_i3_fpgaindvars_iv158_push59_conv_generic430.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_h_sync_buffer122_conv_generic438.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_h_sync_buffer123_conv_generic414.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_in_c_sync_buffer127_conv_generic412.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_in_c_sync_buffer_conv_generic453.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_pad_sync_buffer153_conv_generic440.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_pad_sync_buffer154_conv_generic416.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_stride_sync_buffer148_conv_generic443.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_w_sync_buffer117_conv_generic448.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_syncbuf_w_sync_buffer118_conv_generic419.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B9_branch.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_B9_merge.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going209_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going209_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going213_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going213_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going219_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going219_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going248_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going248_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going252_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going252_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going256_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going256_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going260_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going260_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going264_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going264_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going_conv_generic_sr.vhd" />
+			<FILE name="kernel_hdl/conv_generic/i_acl_pipeline_keep_going_conv_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/conv_generic/loop_limiter_conv_generic0.vhd" />
+			<FILE name="kernel_hdl/conv_generic/loop_limiter_conv_generic1.vhd" />
+			<FILE name="kernel_hdl/conv_generic/loop_limiter_conv_generic2.vhd" />
+			<FILE name="kernel_hdl/conv_generic/loop_limiter_conv_generic3.vhd" />
+			<FILE name="kernel_hdl/conv_generic/loop_limiter_conv_generic4.vhd" />
+			<FILE name="kernel_hdl/conv_generic/loop_limiter_conv_generic5.vhd" />
+			<FILE name="kernel_hdl/conv_generic/conv_generic_function_cra_slave.vhd" />
+		</REQUIREMENTS>
+		<DATA>
+			<INTERFACE port="unnamed_conv_generic0" cosim_name="" type="master" width="256" true_lsu_width="32" burstwidth="5" pipelined="true" addr_space="__global" aspace_id="1" optype="read" criticality="1048576" buffer_location="" group_id="0" />
+			<INTERFACE port="unnamed_conv_generic37" cosim_name="" type="master" width="256" true_lsu_width="8" burstwidth="5" pipelined="true" addr_space="__global" aspace_id="1" optype="read" criticality="1073741824" buffer_location="" group_id="0" />
+			<INTERFACE port="iord_bl_ch_in" cosim_name="" type="master" width="8" true_lsu_width="32767" burstwidth="1" pipelined="true" addr_space="__channel" aspace_id="4" optype="read" criticality="1024" buffer_location="" group_id="0" depth="32" user_depth="32" ready_latency="0" chan_id="ch_in" is_fifo="1" init="" adjust_for_latency="1" almost_full_value="-1" write_success_ignored="0" sfks_id="0" is_sfks_entry="0" is_sfks_token="0" nb_sfks_entry_write="0" read_ready_ignored="0" bits_per_symbol ="0" uses_packets ="0" stall_free ="0" />
+			<INTERFACE port="iowr_bl_ch_out" cosim_name="" type="master" width="8" true_lsu_width="0" burstwidth="1" pipelined="true" addr_space="__channel" aspace_id="4" optype="write" criticality="1024" buffer_location="" group_id="0" depth="32" user_depth="32" ready_latency="0" chan_id="ch_out" is_fifo="1" init="" adjust_for_latency="1" almost_full_value="-1" write_success_ignored="0" sfks_id="0" is_sfks_entry="0" is_sfks_token="0" nb_sfks_entry_write="0" read_ready_ignored="0" bits_per_symbol ="0" uses_packets ="0" stall_free ="0" />
+			<INTERFACE port="unnamed_conv_generic38" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="write" criticality="1073741824" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic50" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic51" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="1" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic52" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic53" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="1" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic54" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic55" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="1" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic56" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic57" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="1" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic58" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic59" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="1" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic60" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic61" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="1" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic62" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic63" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="1" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic64" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="0" bank="-1" />
+			</INTERFACE>
+			<INTERFACE port="unnamed_conv_generic65" cosim_name="" type="master" width="8" true_lsu_width="8" burstwidth="1" pipelined="true" addr_space="__local" aspace_id="5" optype="read" criticality="-1" buffer_location="" group_id="0" >
+				<CONNECTION port="1" bank="-1" />
+			</INTERFACE>
+		</DATA>
+		<KERNEL_ARGS>
+			<ARGUMENT name="weights" cosim_name="" opencl_access_type="ACL_ARG_ADDR_GLOBAL" opencl_type_category="ACL_ARG_MEM_OBJ" size="8" type_qualifier="CR" access_qualifier="ARG_ACCESS_NONE" type_name="uchar*" >
+		</ARGUMENT>
+			<ARGUMENT name="bias" cosim_name="" opencl_access_type="ACL_ARG_ADDR_GLOBAL" opencl_type_category="ACL_ARG_MEM_OBJ" size="8" type_qualifier="CR" access_qualifier="ARG_ACCESS_NONE" type_name="int*" >
+		</ARGUMENT>
+			<ARGUMENT name="w_off" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="b_off" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="w" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="h" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="in_c" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="tile_channels" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="stride" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="pad" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="x_zero" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="1" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="uchar" >
+		</ARGUMENT>
+			<ARGUMENT name="w_zero" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="1" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="uchar" >
+		</ARGUMENT>
+			<ARGUMENT name="y_zero" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="M_mult" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="M_shift" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+		</KERNEL_ARGS>
+		<PRINTF_FORMAT_STRINGS>
+		</PRINTF_FORMAT_STRINGS>
+		<PRINTF_INTERFACES>
+		</PRINTF_INTERFACES>
+	</KERNEL>
+	</KERNEL_BUNDLE>
+	<KERNEL_BUNDLE name="mem_read_generic" compute_units="1">
+	<KERNEL name="mem_read_generic" filename="kernel_hdl/mem_read_generic/mem_read_generic_function_wrapper.vhd" version="1" cosim_name="mem_read_generic" enable_global_profiling="1" workgroup_invariant="1" has_global_atomics="0" num_vector_lanes="1" num_profiling_signals="0" arbitration_latency="5" kernel_side_mem_latency="8">
+		<RESOURCE_INFO>
+			<ID value="0" />
+			<AGGREGATE_STATIC_LOCAL_MEM_SIZE value="0" />
+			<MAX_WORK_GROUP_SIZE value="1" />
+			<REQUIRED_WORK_GROUP_SIZE x="1" y="1" z="1" />
+			<MAX_GLOBAL_WORK_DIM value="0" />
+		</RESOURCE_INFO>
+		<CONFIGURATION>
+			<INTERFACE port="clock_reset" type="clock"/>
+			<INTERFACE port="cra_irq" type="irq"/>
+			<INTERFACE port="cra" type="slave" cosim_name="" width="64" size="256" latency="0" />
+		</CONFIGURATION>
+		<REQUIREMENTS>
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/linux64/lib/dspba/Libraries/vhdl/base/dspba_library_package.vhd" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/linux64/lib/dspba/Libraries/vhdl/base/dspba_library.vhd" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_data_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_ll_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_ll_ram_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_valid_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_dspba_valid_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_staging_reg.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/hld_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/hld_fifo_zero_width.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_high_speed_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_low_latency_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_zero_latency_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fanout_pipeline.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_std_synchronizer_nocut.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_tessellated_incr_decr_threshold.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_tessellated_incr_lookahead.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_reset_handler.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_lfsr.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_pop.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_pipeline.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_push.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_dspba_buffer.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_token_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_full_detector.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_top.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_permute_address.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_pipelined.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_enabled.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_basic_coalescer.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_simple.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_streaming.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_master.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_bursting_load_stores.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_non_aligned_write.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_read_cache.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_atomic.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_prefetch_block.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_wide_wrapper.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_streaming_prefetch.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_aligned_burst_coalesced_lsu.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_toggle_detect.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_debug_mem.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_coalesced_pipelined_write.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_coalesced_pipelined_read.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fifo_stall_valid_lookahead.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/st_top.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_loop_limiter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_clock2x_holder.v" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_function_wrapper.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_function.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B10_sr_0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B1_sr_1.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B2_sr_1.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B3_sr_1.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B4_sr_1.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B5.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B5_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B5_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_c0_for_body40_mem_read_generic_c0_A0Zmem_read_generic.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_body40_mem_read_geA0Z_read_generic244.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_body40_mem_read_geA0Zric258_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_body40_mem_read_geA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_logic_c0_for_body40_mem_read_generA0Z_read_generic193.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going_mem_read_generic195.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_acl_77_pop38_mem_read_generic197.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_phi_decision46_xor_rm79_popA0Z_read_generic199.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop32_mem_read_generic228.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop34_mem_read_generic232.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop37_mem_read_generic236.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop40_mem_read_generic214.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop42_mem_read_generic240.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_c_44_pop30_mem_read_generic203.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_tmp278_pop39_mem_read_generic205.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_acl_77_push38_mem_read_generic222.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_notexitcond_mem_read_generic226.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_phi_decision46_xor_rm79_puA0Z_read_generic216.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push32_mem_read_generic230.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push34_mem_read_generic234.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push37_mem_read_generic238.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push40_mem_read_generic218.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push42_mem_read_generic242.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_c_44_push30_mem_read_generic224.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_tmp278_push39_mem_read_generic220.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_in_c_sync_buffer31_mem_read_generic210.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_in_offset_sync_buffer_mem_read_generic201.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_mem_in_sync_buffer_mem_read_generic207.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B5_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_iowr_bl_ch_in_unnamed_mem_read_genericA0Z_read_generic247.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_load_unnamed_mem_read_generic11_mem_read_generic245.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/readdata_reg_unnamed_mem_read_generic11_A0Zem_read_generic0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_x_zero_sync_buffer_mem_read_generic191.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B5_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B5_sr_1.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B6.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B6_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B6_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B6_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B6_sr_0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B7_sr_0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B8_sr_0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B9_sr_0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B0_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_throttle_pop_mem_read_generic0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_throttle_pop_mem_read_generic_reg.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B0_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B0_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B0_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B1.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B1_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_c0_for_cond14_preheader_mem_read_gA0Zmem_read_generic.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond14_preheader_mA0Zm_read_generic29.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond14_preheader_mA0Zric250_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond14_preheader_mA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_logic_c0_for_cond14_preheader_mem_A0Zem_read_generic2.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going59_mem_read_generic4.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_oy_017_pop11_mem_read_generic8.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_notexitcond60_mem_read_generic27.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_oy_017_push11_mem_read_generic25.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_h_sync_buffer_mem_read_generic12.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_pad_sync_buffer40_mem_read_generic10.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_pad_sync_buffer_mem_read_generic14.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_stride_sync_buffer34_mem_read_generic6.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_stride_sync_buffer_mem_read_generic17.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B1_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B1_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B1_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B10.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B10_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_throttle_push_mem_read_generic248.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_throttle_push_mem_read_generic_reg.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B10_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B10_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B2.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B2_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_c0_for_cond17_preheader_mem_read_gA0Zmem_read_generic.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond17_preheader_mA0Zm_read_generic68.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond17_preheader_mA0Zric252_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond17_preheader_mA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_logic_c0_for_cond17_preheader_mem_A0Zm_read_generic30.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going55_mem_read_generic32.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop14_mem_read_generic64.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_ox_111_pop12_mem_read_generic36.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_sub2463_pop13_mem_read_generic60.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_notexitcond56_mem_read_generic58.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push14_mem_read_generic66.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_ox_111_push12_mem_read_generic56.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_sub2463_push13_mem_read_generic62.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_h_sync_buffer27_mem_read_generic40.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_pad_sync_buffer37_mem_read_generic42.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_pad_sync_buffer39_mem_read_generic38.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_stride_sync_buffer33_mem_read_generic45.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_stride_sync_buffer35_mem_read_generic34.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_w_sync_buffer_mem_read_generic48.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B2_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B2_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B2_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B3.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B3_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_c0_for_cond20_preheader_mem_read_gA0Zmem_read_generic.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond20_preheader_mA0Z_read_generic117.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond20_preheader_mA0Zric254_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_cond20_preheader_mA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_logic_c0_for_cond20_preheader_mem_A0Zm_read_generic69.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going51_mem_read_generic71.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop18_mem_read_generic105.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop20_mem_read_generic113.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_ky_28_pop16_mem_read_generic73.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_sub2464_pop17_mem_read_generic75.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_sub2768_pop19_mem_read_generic109.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i3_fpgaindvars_iv43_pop15_mem_read_generic93.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_notexitcond52_mem_read_generic103.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push18_mem_read_generic107.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push20_mem_read_generic115.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_ky_28_push16_mem_read_generic99.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_sub2464_push17_mem_read_generic97.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_sub2768_push19_mem_read_generic111.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i3_fpgaindvars_iv43_push15_meA0Z_read_generic101.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_h_sync_buffer28_mem_read_generic83.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_h_sync_buffer29_mem_read_generic78.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_pad_sync_buffer38_mem_read_generic85.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_w_sync_buffer23_mem_read_generic88.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_w_sync_buffer25_mem_read_generic81.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B3_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B3_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B3_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B4.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B4_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_c0_for_body22_mem_read_generic_c0_A0Zmem_read_generic.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_body22_mem_read_geA0Z_read_generic190.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_body22_mem_read_geA0Zric256_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_sfc_exit_c0_for_body22_mem_read_geA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_sfc_logic_c0_for_body22_mem_read_generA0Z_read_generic118.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going47_mem_read_generic120.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_or_cond72_pop27_mem_read_generic127.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop24_mem_read_generic178.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop26_mem_read_generic182.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i1_pop29_mem_read_generic186.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_kx_36_pop22_mem_read_generic122.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_mul3474_pop28_mem_read_generic132.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_sub2465_pop23_mem_read_generic174.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i32_sub2769_pop25_mem_read_generic124.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pop_i3_fpgaindvars_iv_pop21_mem_read_generic158.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_notexitcond48_mem_read_generic172.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_or_cond72_push27_mem_read_generic164.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push24_mem_read_generic180.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push26_mem_read_generic184.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i1_push29_mem_read_generic188.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_kx_36_push22_mem_read_generic168.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_mul3474_push28_mem_read_generic162.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_sub2465_push23_mem_read_generic176.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i32_sub2769_push25_mem_read_generic166.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_push_i3_fpgaindvars_iv_push21_mem_read_generic170.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_h_sync_buffer30_mem_read_generic136.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_in_c_sync_buffer32_mem_read_generic151.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_in_c_sync_buffer_mem_read_generic134.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_pad_sync_buffer41_mem_read_generic138.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_stride_sync_buffer36_mem_read_generic141.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_w_sync_buffer24_mem_read_generic129.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_syncbuf_w_sync_buffer26_mem_read_generic146.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B4_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B4_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B4_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B7.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B7_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B7_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B7_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B8.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B8_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B8_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B8_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B9.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/bb_mem_read_generic_B9_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B9_branch.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_B9_merge.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going47_mem_read_generic_sr.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going47_mem_read_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going51_mem_read_generic_sr.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going51_mem_read_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going55_mem_read_generic_sr.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going55_mem_read_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going59_mem_read_generic_sr.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going59_mem_read_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going_mem_read_generic_sr.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/i_acl_pipeline_keep_going_mem_read_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/loop_limiter_mem_read_generic0.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/loop_limiter_mem_read_generic1.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/loop_limiter_mem_read_generic2.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/loop_limiter_mem_read_generic3.vhd" />
+			<FILE name="kernel_hdl/mem_read_generic/mem_read_generic_function_cra_slave.vhd" />
+		</REQUIREMENTS>
+		<DATA>
+			<INTERFACE port="unnamed_mem_read_generic11" cosim_name="" type="master" width="256" true_lsu_width="8" burstwidth="5" pipelined="true" addr_space="__global" aspace_id="1" optype="read" criticality="-1" buffer_location="" group_id="0" />
+			<INTERFACE port="iowr_bl_ch_in" cosim_name="" type="master" width="8" true_lsu_width="0" burstwidth="1" pipelined="true" addr_space="__channel" aspace_id="4" optype="write" criticality="1024" buffer_location="" group_id="0" depth="32" user_depth="32" ready_latency="0" chan_id="ch_in" is_fifo="1" init="" adjust_for_latency="1" almost_full_value="-1" write_success_ignored="0" sfks_id="0" is_sfks_entry="0" is_sfks_token="0" nb_sfks_entry_write="0" read_ready_ignored="0" bits_per_symbol ="0" uses_packets ="0" stall_free ="0" />
+		</DATA>
+		<KERNEL_ARGS>
+			<ARGUMENT name="mem_in" cosim_name="" opencl_access_type="ACL_ARG_ADDR_GLOBAL" opencl_type_category="ACL_ARG_MEM_OBJ" size="8" type_qualifier="CR" access_qualifier="ARG_ACCESS_NONE" type_name="uchar*" >
+		</ARGUMENT>
+			<ARGUMENT name="in_offset" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="w" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="h" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="in_c" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="stride" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="pad" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="x_zero" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="1" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="uchar" >
+		</ARGUMENT>
+		</KERNEL_ARGS>
+		<PRINTF_FORMAT_STRINGS>
+		</PRINTF_FORMAT_STRINGS>
+		<PRINTF_INTERFACES>
+		</PRINTF_INTERFACES>
+	</KERNEL>
+	</KERNEL_BUNDLE>
+	<KERNEL_BUNDLE name="mem_write_generic" compute_units="1">
+	<KERNEL name="mem_write_generic" filename="kernel_hdl/mem_write_generic/mem_write_generic_function_wrapper.vhd" version="1" cosim_name="mem_write_generic" enable_global_profiling="1" workgroup_invariant="1" has_global_atomics="0" num_vector_lanes="1" num_profiling_signals="0" arbitration_latency="5" kernel_side_mem_latency="8">
+		<RESOURCE_INFO>
+			<ID value="2" />
+			<AGGREGATE_STATIC_LOCAL_MEM_SIZE value="0" />
+			<MAX_WORK_GROUP_SIZE value="1" />
+			<REQUIRED_WORK_GROUP_SIZE x="1" y="1" z="1" />
+			<MAX_GLOBAL_WORK_DIM value="0" />
+		</RESOURCE_INFO>
+		<CONFIGURATION>
+			<INTERFACE port="clock_reset" type="clock"/>
+			<INTERFACE port="cra_irq" type="irq"/>
+			<INTERFACE port="cra" type="slave" cosim_name="" width="64" size="256" latency="0" />
+		</CONFIGURATION>
+		<REQUIREMENTS>
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/linux64/lib/dspba/Libraries/vhdl/base/dspba_library_package.vhd" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/linux64/lib/dspba/Libraries/vhdl/base/dspba_library.vhd" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_data_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_ll_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_ll_ram_fifo.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_valid_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_dspba_valid_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_staging_reg.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/hld_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/hld_fifo_zero_width.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_high_speed_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_low_latency_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_zero_latency_fifo.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fanout_pipeline.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_std_synchronizer_nocut.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_tessellated_incr_decr_threshold.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_tessellated_incr_lookahead.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_reset_handler.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_lfsr.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_pop.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_dspba_buffer.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_ffwdsrc.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_full_detector.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_pipeline.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_push.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_token_fifo_counter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/st_top.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_top.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_permute_address.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_pipelined.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_enabled.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_basic_coalescer.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_simple.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_streaming.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_master.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_bursting_load_stores.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_non_aligned_write.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_read_cache.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_atomic.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_prefetch_block.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_wide_wrapper.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_streaming_prefetch.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_aligned_burst_coalesced_lsu.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_toggle_detect.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_debug_mem.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_coalesced_pipelined_write.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/lsu_burst_coalesced_pipelined_read.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_fifo_stall_valid_lookahead.sv" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_loop_limiter.v" />
+			<FILE name="$::env(INTELFPGAOCLSDKROOT)/ip/acl_clock2x_holder.v" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_function_wrapper.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_function.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B1_sr_1.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B2_sr_1.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B3.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B3_branch.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B3_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_sfc_c0_for_body19_mem_write_generic_c0A0Zem_write_generic.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_body19_mem_write_gA0Zwrite_generic140.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_body19_mem_write_gA0Zric152_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_body19_mem_write_gA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_sfc_logic_c0_for_body19_mem_write_geneA0Zwrite_generic105.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going_mem_write_generic107.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i1_pop13_mem_write_generic132.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i1_pop14_mem_write_generic136.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i32_current_out_idx_14_pop1025A0Zwrite_generic117.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i32_oc_22_pop12_mem_write_generic115.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i1_notexitcond_mem_write_generic130.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i1_push13_mem_write_generic134.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i1_push14_mem_write_generic138.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i32_current_out_idx_14_pop102A0Zwrite_generic126.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i32_oc_22_push12_mem_write_generic128.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_dst_unnamed_mem_write_generic15_mA0Zwrite_generic112.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_mem_out_sync_buffer_mem_write_generic119.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_tile_channels_sync_buffer3_memA0Zwrite_generic109.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_tile_channels_sync_buffer_mem_A0Zwrite_generic122.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B3_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_iord_bl_ch_out_unnamed_mem_write_generA0Zwrite_generic141.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_store_unnamed_mem_write_generic17_mem_A0Zwrite_generic142.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B3_merge.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B3_sr_1.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B4.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B4_merge.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B4_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B4_branch.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B4_sr_0.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B5_sr_0.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B6_sr_0.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B0.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B0_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_sfc_c0_entry_mem_write_generic_c0_enteA0Zem_write_generic.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_entry_mem_write_generiA0Z_write_generic44.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_entry_mem_write_generiA0Zric146_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_entry_mem_write_generiA0Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_sfc_logic_c0_entry_mem_write_generic_cA0Zm_write_generic6.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_src_unnamed_mem_write_generic1_meA0Z_write_generic30.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_src_unnamed_mem_write_generic2_meA0Z_write_generic32.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_src_unnamed_mem_write_generic3_meA0Z_write_generic34.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_src_unnamed_mem_write_generic4_meA0Z_write_generic36.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_src_unnamed_mem_write_generic5_meA0Z_write_generic38.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_src_unnamed_mem_write_generic6_meA0Z_write_generic40.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_src_unnamed_mem_write_generic7_meA0Z_write_generic42.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_h_sync_buffer_mem_write_generic11.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_out_c_sync_buffer2_mem_write_generic22.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_pad_sync_buffer_mem_write_generic8.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_stride_sync_buffer_mem_write_generic15.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_w_sync_buffer_mem_write_generic13.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i1_throttle_pop_mem_write_generic0.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i1_throttle_pop_mem_write_generic_reg.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_src_unnamed_mem_write_generic9_meA0Z_write_generic45.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_out_offset_sync_buffer_mem_write_generic2.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_t_offset_sync_buffer_mem_write_generic4.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B0_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B0_branch.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B0_merge.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B1.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B1_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_sfc_c0_for_cond14_preheader_mem_write_A0Zem_write_generic.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_cond14_preheader_mA0Z_write_generic73.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_cond14_preheader_mA0Zric148_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_cond14_preheader_mA1Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_sfc_logic_c0_for_cond14_preheader_mem_A0Z_write_generic47.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going21_mem_write_generic49.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i32_current_out_idx_07_pop8_meA0Z_write_generic57.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i33_fpgaindvars_iv5_pop7_mem_write_generic53.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i1_notexitcond22_mem_write_generic67.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i32_current_out_idx_07_push8_A0Z_write_generic71.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i33_fpgaindvars_iv5_push7_memA0Z_write_generic65.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_dst_add1212_mem_write_generic55.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_dst_came_from_for_cond14_preheadeA0Z_write_generic69.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_dst_cond11_mem_write_generic59.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_dst_unnamed_mem_write_generic10_mA0Z_write_generic51.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B1_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B1_branch.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B1_merge.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B2.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B2_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_sfc_c0_for_cond17_preheader_mem_write_A0Zem_write_generic.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_cond17_preheader_mA0Zwrite_generic104.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_cond17_preheader_mA0Zric150_data_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_sfc_exit_c0_for_cond17_preheader_mA1Zic_full_detector.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_sfc_logic_c0_for_cond17_preheader_mem_A0Z_write_generic74.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going17_mem_write_generic76.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i1_pop11_mem_write_generic100.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i32_current_out_idx_14_pop10_mA0Z_write_generic96.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pop_i33_fpgaindvars_iv_pop9_mem_write_generic80.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i1_notexitcond18_mem_write_generic92.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i1_push11_mem_write_generic102.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i32_current_out_idx_14_push10A0Z_write_generic98.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i33_fpgaindvars_iv_push9_mem_write_generic90.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_dst_sub39_mem_write_generic84.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_dst_sub8_mem_write_generic82.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_ffwd_dst_unnamed_mem_write_generic12_mA0Z_write_generic78.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_syncbuf_out_c_sync_buffer_mem_write_generic94.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B2_merge_reg.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B2_branch.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B2_merge.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B5.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B5_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B5_branch.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B5_merge.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B6.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/bb_mem_write_generic_B6_stall_region.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i1_throttle_push_mem_write_generic144.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_push_i1_throttle_push_mem_write_generic_reg.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B6_branch.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_B6_merge.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going17_mem_write_generic_sr.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going17_mem_write_geA0Zneric_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going21_mem_write_generic_sr.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going21_mem_write_geA0Zneric_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going_mem_write_generic_sr.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/i_acl_pipeline_keep_going_mem_write_generic_valid_fifo.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/loop_limiter_mem_write_generic0.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/loop_limiter_mem_write_generic1.vhd" />
+			<FILE name="kernel_hdl/mem_write_generic/mem_write_generic_function_cra_slave.vhd" />
+		</REQUIREMENTS>
+		<DATA>
+			<INTERFACE port="unnamed_mem_write_generic17" cosim_name="" type="master" width="256" true_lsu_width="8" burstwidth="5" pipelined="true" addr_space="__global" aspace_id="1" optype="write" criticality="-1" buffer_location="" group_id="0" />
+			<INTERFACE port="iord_bl_ch_out" cosim_name="" type="master" width="8" true_lsu_width="32609" burstwidth="1" pipelined="true" addr_space="__channel" aspace_id="4" optype="read" criticality="1024" buffer_location="" group_id="0" depth="32" user_depth="32" ready_latency="0" chan_id="ch_out" is_fifo="1" init="" adjust_for_latency="1" almost_full_value="-1" write_success_ignored="0" sfks_id="0" is_sfks_entry="0" is_sfks_token="0" nb_sfks_entry_write="0" read_ready_ignored="0" bits_per_symbol ="0" uses_packets ="0" stall_free ="0" />
+		</DATA>
+		<KERNEL_ARGS>
+			<ARGUMENT name="mem_out" cosim_name="" opencl_access_type="ACL_ARG_ADDR_GLOBAL" opencl_type_category="ACL_ARG_MEM_OBJ" size="8" type_qualifier="R" access_qualifier="ARG_ACCESS_NONE" type_name="uchar*" >
+		</ARGUMENT>
+			<ARGUMENT name="out_offset" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="w" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="h" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="out_c" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="tile_channels" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="t_offset" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="stride" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+			<ARGUMENT name="pad" cosim_name="" opencl_access_type="ACL_ARG_ADDR_NONE" opencl_type_category="ACL_ARG_BY_VALUE" size="4" type_qualifier="ARG_TYPE_NONE" access_qualifier="ARG_ACCESS_NONE" type_name="int" >
+		</ARGUMENT>
+		</KERNEL_ARGS>
+		<PRINTF_FORMAT_STRINGS>
+		</PRINTF_FORMAT_STRINGS>
+		<PRINTF_INTERFACES>
+		</PRINTF_INTERFACES>
+	</KERNEL>
+	</KERNEL_BUNDLE>
+	<STRUCT_TYPE_DEFS>
+	</STRUCT_TYPE_DEFS>
+</KERNEL_LIST>
