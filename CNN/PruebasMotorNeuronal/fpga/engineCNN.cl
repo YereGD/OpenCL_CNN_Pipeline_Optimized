@@ -3,28 +3,29 @@
 // ============================================================================
 #pragma OPENCL EXTENSION cl_intel_channels : enable
 
+// Canales de comunicación interna en hardware (FIFOs)
 channel uchar ch_in __attribute__((depth(32)));
 channel uchar ch_out __attribute__((depth(32)));
 
-// 🔥 TILING AJUSTADO A 16 (Garantiza el 100% de éxito en el enrutamiento)
+// 🔥 TILING AJUSTADO A 16 (Garantiza velocidad y éxito en el enrutamiento)
 #define TILE_OUT_C 16
-#define MAX_W_PER_OC 9216 
+#define MAX_W_PER_OC 9216 // 3*3*1024 (Máximo posible en nuestra arquitectura)
 
 // ============================================================================
-// KERNEL 1: LECTURA DE MEMORIA EXTERNA 
+// KERNEL 1: LECTURA DE MEMORIA EXTERNA (DDR3)
 // ============================================================================
 __attribute__((max_global_work_dim(0))) 
 __kernel void mem_read_generic(
     __global const uchar* restrict mem_in,
     int in_offset, int w, int h, int in_c, int stride, int pad, uchar x_zero)
 {
-    // 🔥 OPTIMIZACIÓN 1: Cero Divisiones Hardware (Uso de Bit Shift para stride 2)
+    // OPTIMIZACIÓN 1: Cero Divisiones Hardware (Uso de Bit Shift para stride 2)
     int tmp_h = h + 2 * pad - 3;
     int tmp_w = w + 2 * pad - 3;
     int out_h = (stride == 2 ? (tmp_h >> 1) : tmp_h) + 1;
     int out_w = (stride == 2 ? (tmp_w >> 1) : tmp_w) + 1;
 
-    // 🔥 OPTIMIZACIÓN 2: Precalcular constantes fuera del bucle
+    // OPTIMIZACIÓN 2: Precalcular constantes fuera de los bucles para ahorrar ALUTs
     int w_in_c = w * in_c;
 
     #pragma unroll 1
@@ -79,8 +80,10 @@ __kernel void conv_generic(
         if (oc < tile_channels) local_bias[oc] = bias[(b_off / 4) + oc]; 
     }
 
-    // 🔥 OPTIMIZACIÓN 3: Obligar a usar 1 solo banco RAM para ahorrar ALUTs de ruteo
-    __local uchar local_W[TILE_OUT_C][MAX_W_PER_OC] __attribute__((memory, numbanks(1)));
+    // 🔥 SOLUCIÓN A LOS PUNTOS VERDES Y LA PANTALLA NEGRA:
+    // Al usar una matriz 2D pura sin atributos de banco, la FPGA construirá 16 "taquillas" físicas.
+    // Esto permite a los 16 trabajadores leer sus pesos simultáneamente sin colapsar.
+    __local uchar local_W[TILE_OUT_C][MAX_W_PER_OC];
     
     int limit = 3 * 3 * in_c;
     #pragma unroll 1
@@ -117,6 +120,7 @@ __kernel void conv_generic(
                         uchar px = read_channel_intel(ch_in);
                         int px_val = (int)px - (int)x_zero;
 
+                        // MATEMÁTICAS EN PARALELO (16 DSPs trabajando a la vez)
                         #pragma unroll
                         for (int oc = 0; oc < TILE_OUT_C; oc++) {
                             if (oc < tile_channels) {
@@ -124,7 +128,7 @@ __kernel void conv_generic(
                                 acc[oc] += px_val * w_val;
                             }
                         }
-                        w_idx++; 
+                        w_idx++; // Incremento barato (cero multiplicaciones complejas)
                     }
                 }
             }

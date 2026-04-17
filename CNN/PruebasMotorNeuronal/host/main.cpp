@@ -5,15 +5,14 @@
 #include <algorithm>
 #include <CL/cl.h>
 #include <opencv2/opencv.hpp>
-#include <opencv2/dnn.hpp>
-#include "network_schedule.h"
+#include "network_schedule.h" // NMS manual integrado, sin opencv2/dnn.hpp
 
 // ========================================================================
 // CONSTANTES Y ESTRUCTURAS
 // ========================================================================
-#define MAX_DDR_BUFFER_SIZE (32 * 1024 * 1024) // 32MB para Ping-Pong 
-#define CPU_OUT_SIZE (600 * 1024)              // Tamaño para salidas finales
-#define TILE_OUT_C 16                          // Tamaño de Tiling hardware
+#define MAX_DDR_BUFFER_SIZE (32 * 1024 * 1024) 
+#define CPU_OUT_SIZE (600 * 1024)              
+#define TILE_OUT_C 16 // Tiling sincronizado con el hardware                        
 
 struct FpgaOutput {
     int w, h, valid_channels;
@@ -49,7 +48,7 @@ std::vector<unsigned char> load_binary_file(const std::string& filename) {
 }
 
 // ========================================================================
-// INICIALIZACIÓN DE OPENCL (FPGA)
+// INICIALIZACIÓN DE OPENCL
 // ========================================================================
 void init_opencl_and_engine(unsigned char* w_data, int* b_data, size_t w_size, size_t b_size) {
     cl_int err;
@@ -84,21 +83,23 @@ void init_opencl_and_engine(unsigned char* w_data, int* b_data, size_t w_size, s
 }
 
 // ========================================================================
-// BUCLE DE INFERENCIA EN HARDWARE
+// BUCLE DE INFERENCIA
 // ========================================================================
 void run_inference(unsigned char* input_data, size_t input_size, unsigned char* output_data) {
     clEnqueueWriteBuffer(queue_read, d_buf_0, CL_TRUE, 0, input_size, input_data, 0, NULL, NULL);
 
     for (int i = 0; i < TOTAL_LAYERS; i++) {
         ConvLayerDesc layer = network_schedule[i];
+        
+        std::cout << "[HOST] Procesando capa " << i+1 << "/" << TOTAL_LAYERS << "\r" << std::flush;
 
         cl_mem mem_in  = (layer.buf_in == 0) ? d_buf_0 : d_buf_1;
         cl_mem mem_out = (layer.buf_out == 0) ? d_buf_0 : ((layer.buf_out == 1) ? d_buf_1 : d_buf_out);
 
         for (int t = 0; t < layer.out_c; t += TILE_OUT_C) {
-            int tile_channels = std::min(TILE_OUT_C, layer.out_c - t);
+            int tile_channels = std::min((int)TILE_OUT_C, layer.out_c - t);
 
-            // A. Argumentos Lectura
+            // A. Lectura
             clSetKernelArg(kernel_read, 0, sizeof(cl_mem), &mem_in);
             clSetKernelArg(kernel_read, 1, sizeof(int), &layer.in_offset);
             clSetKernelArg(kernel_read, 2, sizeof(int), &layer.w);
@@ -108,7 +109,7 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clSetKernelArg(kernel_read, 6, sizeof(int), &layer.pad);
             clSetKernelArg(kernel_read, 7, sizeof(unsigned char), &layer.x_zero);
 
-            // B. Argumentos Convolución
+            // B. Convolución
             int w_off_bytes = layer.w_offset + (t * 3 * 3 * layer.in_c);
             int b_off_bytes = layer.b_offset + (t * 4);
             int y_zero_int  = layer.y_zero;
@@ -129,7 +130,7 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clSetKernelArg(kernel_conv, 13, sizeof(int), &layer.M_multiplier);
             clSetKernelArg(kernel_conv, 14, sizeof(int), &layer.M_shift);
 
-            // C. Argumentos Escritura
+            // C. Escritura
             clSetKernelArg(kernel_write, 0, sizeof(cl_mem), &mem_out);
             clSetKernelArg(kernel_write, 1, sizeof(int), &layer.out_offset);
             clSetKernelArg(kernel_write, 2, sizeof(int), &layer.w);
@@ -145,15 +146,54 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clEnqueueTask(queue_write, kernel_write, 0, NULL, NULL);
             clFinish(queue_write);
         }
-        std::cout << "\r[HOST] Procesando capa " << i+1 << "/" << TOTAL_LAYERS << std::flush;
     }
     std::cout << std::endl;
-
     clEnqueueReadBuffer(queue_write, d_buf_out, CL_TRUE, 0, CPU_OUT_SIZE, output_data, 0, NULL, NULL);
 }
 
 // ========================================================================
-// POST-PROCESADO: DECODIFICACIÓN Y NMS
+// NMS MANUAL
+// ========================================================================
+void custom_NMSBoxes(const std::vector<cv::Rect>& bboxes, const std::vector<float>& scores, 
+                     float score_threshold, float nms_threshold, std::vector<int>& indices) {
+    indices.clear();
+    std::vector<std::pair<float, int>> score_index_vec;
+    
+    for (size_t i = 0; i < bboxes.size(); i++) {
+        if (scores[i] > score_threshold) {
+            score_index_vec.push_back({scores[i], (int)i});
+        }
+    }
+    
+    std::sort(score_index_vec.begin(), score_index_vec.end(), 
+              [](const std::pair<float, int>& a, const std::pair<float, int>& b) {
+                  return a.first > b.first;
+              });
+
+    std::vector<bool> suppressed(bboxes.size(), false);
+    for (size_t i = 0; i < score_index_vec.size(); i++) {
+        int idx = score_index_vec[i].second;
+        if (suppressed[idx]) continue;
+        indices.push_back(idx);
+        
+        for (size_t j = i + 1; j < score_index_vec.size(); j++) {
+            int next_idx = score_index_vec[j].second;
+            if (suppressed[next_idx]) continue;
+            
+            cv::Rect intersection = bboxes[idx] & bboxes[next_idx];
+            float inter_area = intersection.area();
+            float union_area = bboxes[idx].area() + bboxes[next_idx].area() - inter_area;
+            float iou = inter_area / union_area;
+            
+            if (iou > nms_threshold) {
+                suppressed[next_idx] = true;
+            }
+        }
+    }
+}
+
+// ========================================================================
+// POST-PROCESADO: DECODIFICACIÓN
 // ========================================================================
 void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
     std::vector<FpgaOutput> all_outputs;
@@ -170,7 +210,6 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
             for (int y = 0; y < out_h; ++y) {
                 for (int x = 0; x < out_w; ++x) {
                     for (int c = 0; c < f_out.valid_channels; ++c) {
-                        // 🚨 USAMOS EL OFFSET EXACTO ASIGNADO POR PYTHON 🚨
                         int index = layer.out_offset + (y * out_w * layer.out_c) + (x * layer.out_c) + c;
                         f_out.data_float.push_back(((int)cpu_buffer[index] - layer.y_zero) * layer.y_scale);
                     }
@@ -180,10 +219,6 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
         }
     }
 
-    std::sort(all_outputs.begin(), all_outputs.end(), [](const FpgaOutput& a, const FpgaOutput& b) {
-        return a.w > b.w; 
-    });
-
     std::vector<FpgaOutput> confs, locs;
     for(auto& o : all_outputs) {
         if (o.valid_channels <= 6) confs.push_back(o);
@@ -192,9 +227,8 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
 
     std::vector<cv::Rect> bboxes;
     std::vector<float> scores;
-    float SCORE_THRESHOLD = 0.50f; 
+    float SCORE_THRESHOLD = 0.60f; // Umbral de confianza
     float NMS_THRESHOLD = 0.40f;
-    float global_max = 0.0f;
 
     std::vector<std::vector<int>> sizes = {{10, 16, 24}, {32, 48}, {64, 96}, {128, 192, 256}};
     std::vector<int> steps = {8, 16, 32, 64};
@@ -214,8 +248,6 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
                     
                     float max_c = std::max(c_bg, c_face);
                     float prob = std::exp(c_face - max_c) / (std::exp(c_bg - max_c) + std::exp(c_face - max_c));
-
-                    if (prob > global_max) global_max = prob;
 
                     if (prob > SCORE_THRESHOLD) {
                         int l_idx = (p_idx * n_anchors * 4) + (a * 4);
@@ -257,46 +289,43 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
         }
     }
 
-    std::cout << "\n[DEBUG] Confianza Maxima pura detectada: " << global_max * 100 << "%" << std::endl;
-    
     std::vector<int> indices;
-    cv::dnn::NMSBoxes(bboxes, scores, SCORE_THRESHOLD, NMS_THRESHOLD, indices);
+    custom_NMSBoxes(bboxes, scores, SCORE_THRESHOLD, NMS_THRESHOLD, indices);
     
     for (int idx : indices) {
         cv::rectangle(image, bboxes[idx], cv::Scalar(0, 255, 0), 2);
-        std::cout << "✅ Cara detectada en: [" << bboxes[idx].width << " x " << bboxes[idx].height 
-                  << " desde (" << bboxes[idx].x << ", " << bboxes[idx].y << ")] -> " 
-                  << scores[idx] * 100 << "%" << std::endl;
+        std::string label = cv::format("%.1f%%", scores[idx] * 100);
+        cv::putText(image, label, cv::Point(bboxes[idx].x, bboxes[idx].y - 5), 
+                    cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
     }
-    cv::imwrite("resultado_final.jpg", image);
-    std::cout << "📸 Imagen guardada como 'resultado_final.jpg'" << std::endl;
 }
 
 // ========================================================================
-// MAIN: FLUJO PRINCIPAL
+// MAIN: PRUEBA CON IMAGEN ESTÁTICA
 // ========================================================================
 int main() {
-    std::cout << "🚀 INICIANDO MOTOR FPGA INT8..." << std::endl;
+    std::cout << " INICIANDO MOTOR FPGA INT8 (Prueba Imagen)..." << std::endl;
 
     std::vector<unsigned char> rw = load_binary_file("weights.bin");
     std::vector<unsigned char> rb = load_binary_file("bias.bin");
     
     init_opencl_and_engine(rw.data(), (int*)rb.data(), rw.size(), rb.size());
 
-    cv::Mat img = cv::imread("images.jpeg");
-    if (img.empty()) {
-        std::cerr << " Error: No se pudo cargar images.jpeg" << std::endl;
+    // Cargar imagen de prueba
+    cv::Mat frame = cv::imread("images.jpeg");
+    if (frame.empty()) {
+        std::cerr << "❌ Error: No se encuentra 'images.jpeg' en la carpeta." << std::endl;
         return 1;
     }
 
     cv::Mat resized_img, rgb_img;
-    cv::resize(img, resized_img, cv::Size(320, 240));
+    cv::resize(frame, resized_img, cv::Size(320, 240));
     cv::cvtColor(resized_img, rgb_img, cv::COLOR_BGR2RGB);
 
     unsigned char x_z = network_schedule[0].x_zero;
     std::vector<unsigned char> padded(320 * 240 * 16, x_z);
+    std::vector<unsigned char> out(CPU_OUT_SIZE, 0);
 
-    // Empaquetado HWC de la imagen RGB pura
     for (int y = 0; y < 240; ++y) {
         for (int x = 0; x < 320; ++x) {
             cv::Vec3b p = rgb_img.at<cv::Vec3b>(y, x);
@@ -307,10 +336,14 @@ int main() {
         }
     }
 
-    std::vector<unsigned char> out(CPU_OUT_SIZE, 0);
+    // Inferencia y postprocesado
     run_inference(padded.data(), padded.size(), out.data());
-    post_process_and_draw(img, out.data());
+    post_process_and_draw(frame, out.data());
 
+    // Guardar imagen en disco
+    cv::imwrite("resultado_final.jpg", frame);
+    std::cout << " Imagen guardada como 'resultado_final.jpg'" << std::endl;
     std::cout << " Proceso Finalizado con Éxito." << std::endl;
+    
     return 0;
 }
