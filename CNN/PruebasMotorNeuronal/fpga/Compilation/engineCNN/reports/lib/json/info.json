@@ -1,8 +1,0 @@
-{"name":"Info","rows":[
-{"name":"Project Name","data":["engineCNN"],"classes":["info-table"]},
-{"name":"Target Family, Device, Board","data":["Cyclone V, 5CSXFC6D6F31C8ES, de10_nano:de10_nano_sharedonly"]},
-{"name":"AOC Version","data":["18.1.0 Build 625"]},
-{"name":"Quartus Version","data":["18.1.0 Build 625"]},
-{"name":"Command","data":["aoc -v -report -board=de10_nano_sharedonly -board-package=/home/yere-tft/Escritorio/de10_nano engineCNN.cl"]},
-{"name":"Reports Generated At", "data":["Thu Apr 16 12:22:01 2026"]}
-]}
