@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <CL/cl.h>
 #include <opencv2/opencv.hpp>
-#include "network_schedule.h" // NMS manual integrado, sin opencv2/dnn.hpp
+#include "network_schedule.h" 
 
 // ========================================================================
 // CONSTANTES Y ESTRUCTURAS
@@ -326,10 +326,11 @@ int main() {
     std::vector<unsigned char> padded(320 * 240 * 16, x_z);
     std::vector<unsigned char> out(CPU_OUT_SIZE, 0);
 
+    int first_in_c = network_schedule[0].in_c; // Esto valdrá 3
     for (int y = 0; y < 240; ++y) {
         for (int x = 0; x < 320; ++x) {
             cv::Vec3b p = rgb_img.at<cv::Vec3b>(y, x);
-            int base = (y * 320 + x) * 16;
+            int base = (y * 320 + x) * first_in_c; // Ahora los píxeles van pegados
             padded[base + 0] = p[0]; 
             padded[base + 1] = p[1]; 
             padded[base + 2] = p[2]; 
