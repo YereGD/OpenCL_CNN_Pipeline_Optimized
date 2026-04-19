@@ -12,7 +12,7 @@
 // ========================================================================
 #define MAX_DDR_BUFFER_SIZE (32 * 1024 * 1024) 
 #define CPU_OUT_SIZE (600 * 1024)              
-#define TILE_OUT_C 4 // TILING AJUSTADO PARA EL NUEVO MOTOR SIMD x4                         
+#define TILE_OUT_C 4 // ¡TILING AJUSTADO PARA EL NUEVO MOTOR SIMD x4!                         
 
 struct FpgaOutput {
     int w, h, valid_channels;
@@ -34,6 +34,7 @@ cl_kernel kernel_read, kernel_conv, kernel_write;
 cl_mem d_weights, d_bias;
 cl_mem d_buf_0, d_buf_1, d_buf_out;
 
+// Clon dinámico del schedule para poder modificar la Capa 0
 std::vector<ConvLayerDesc> active_schedule;
 
 // ========================================================================
@@ -49,8 +50,9 @@ std::vector<unsigned char> load_binary_file(const std::string& filename) {
     return buffer;
 }
 
+// Inyecta ceros en los pesos de la Capa 0 para que sea múltiplo de 4
 void pad_weights_for_simd(std::vector<unsigned char>& w_data) {
-    if (active_schedule[0].in_c % 4 == 0) return;
+    if (active_schedule[0].in_c % 4 == 0) return; 
 
     int orig_in_c = active_schedule[0].in_c; 
     int pad_in_c = ((orig_in_c + 3) / 4) * 4; 
@@ -126,7 +128,7 @@ void init_opencl_and_engine(unsigned char* w_data, int* b_data, size_t w_size, s
 }
 
 // ========================================================================
-// INFERENCIA EN HARDWARE
+// BUCLE DE INFERENCIA EN HARDWARE
 // ========================================================================
 void run_inference(unsigned char* input_data, size_t input_size, unsigned char* output_data) {
     clEnqueueWriteBuffer(queue_read, d_buf_0, CL_TRUE, 0, input_size, input_data, 0, NULL, NULL);
@@ -134,14 +136,13 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
     for (int i = 0; i < active_schedule.size(); i++) {
         ConvLayerDesc layer = active_schedule[i]; 
 
-        std::cout << "  -> Emulando capa " << i << " / " << active_schedule.size() << "..." << std::endl;
-
         cl_mem mem_in  = (layer.buf_in == 0) ? d_buf_0 : d_buf_1;
         cl_mem mem_out = (layer.buf_out == 0) ? d_buf_0 : ((layer.buf_out == 1) ? d_buf_1 : d_buf_out);
 
         for (int t = 0; t < layer.out_c; t += TILE_OUT_C) {
             int tile_channels = std::min((int)TILE_OUT_C, layer.out_c - t);
 
+            // A. Argumentos Lectura
             clSetKernelArg(kernel_read, 0, sizeof(cl_mem), &mem_in);
             clSetKernelArg(kernel_read, 1, sizeof(int), &layer.in_offset);
             clSetKernelArg(kernel_read, 2, sizeof(int), &layer.w);
@@ -151,14 +152,18 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clSetKernelArg(kernel_read, 6, sizeof(int), &layer.pad);
             clSetKernelArg(kernel_read, 7, sizeof(unsigned char), &layer.x_zero);
 
+            // B. Argumentos Convolución
             int w_off_bytes = layer.w_offset + (t * 3 * 3 * layer.in_c);
-            int b_off_index = (layer.b_offset / 4) + t;
+            
+            
+            // Calculamos el índice como entero, no en bytes.
+            int b_off_index = (layer.b_offset / 4) + t; 
             int y_zero_int  = layer.y_zero;
 
             clSetKernelArg(kernel_conv, 0, sizeof(cl_mem), &d_weights);
             clSetKernelArg(kernel_conv, 1, sizeof(cl_mem), &d_bias);
             clSetKernelArg(kernel_conv, 2, sizeof(int), &w_off_bytes);
-            clSetKernelArg(kernel_conv, 3, sizeof(int), &b_off_index);
+            clSetKernelArg(kernel_conv, 3, sizeof(int), &b_off_index); 
             clSetKernelArg(kernel_conv, 4, sizeof(int), &layer.w);
             clSetKernelArg(kernel_conv, 5, sizeof(int), &layer.h);
             clSetKernelArg(kernel_conv, 6, sizeof(int), &layer.in_c);
@@ -171,6 +176,7 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clSetKernelArg(kernel_conv, 13, sizeof(int), &layer.M_multiplier);
             clSetKernelArg(kernel_conv, 14, sizeof(int), &layer.M_shift);
 
+            // C. Argumentos Escritura
             clSetKernelArg(kernel_write, 0, sizeof(cl_mem), &mem_out);
             clSetKernelArg(kernel_write, 1, sizeof(int), &layer.out_offset);
             clSetKernelArg(kernel_write, 2, sizeof(int), &layer.w);
@@ -192,7 +198,7 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
 }
 
 // ========================================================================
-// NMS MANUAL Y POST-PROCESADO
+// NMS MANUAL
 // ========================================================================
 void custom_NMSBoxes(const std::vector<cv::Rect>& bboxes, const std::vector<float>& scores, 
                      float score_threshold, float nms_threshold, std::vector<int>& indices) {
@@ -232,6 +238,9 @@ void custom_NMSBoxes(const std::vector<cv::Rect>& bboxes, const std::vector<floa
     }
 }
 
+// ========================================================================
+// POST-PROCESADO: DECODIFICACIÓN
+// ========================================================================
 void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
     std::vector<FpgaOutput> all_outputs;
 
@@ -339,70 +348,81 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
 }
 
 // ========================================================================
-// MAIN: PROCESADO DE UNA SOLA IMAGEN (PARA EMULADOR)
+// MAIN: FLUJO DE VIDEO EN TIEMPO REAL
 // ========================================================================
 int main() {
-    std::cout << "🚀 INICIANDO MOTOR FPGA INT8 EN MODO IMAGEN ESTÁTICA..." << std::endl;
+    std::cout << "🚀 INICIANDO MOTOR FPGA INT8 EN MODO WEBCAM..." << std::endl;
 
-    // 1. Clonar schedule y aplicar padding
+    // 1. Clonar el schedule en memoria dinámica para poder alterarlo
     active_schedule.assign(network_schedule, network_schedule + TOTAL_LAYERS);
+
+    // 2. Cargar pesos y aplicar el Padding SIMD
     std::vector<unsigned char> rw = load_binary_file("weights.bin");
     std::vector<unsigned char> rb = load_binary_file("bias.bin");
     pad_weights_for_simd(rw);
     
-    // 2. Inicializar OpenCL
+    // 3. Inicializar OpenCL con el nuevo bitstream
     init_opencl_and_engine(rw.data(), (int*)rb.data(), rw.size(), rb.size());
 
-    // 3. Cargar la imagen de prueba (¡Cambia el nombre si es necesario!)
-    std::string image_path = "images.jpeg"; 
-    cv::Mat frame = cv::imread(image_path);
-    if (frame.empty()) {
-        std::cerr << "❌ Error: No se pudo cargar la imagen: " << image_path << std::endl;
+    cv::VideoCapture cap(0);
+    if (!cap.isOpened()) {
+        std::cerr << "❌ Error: No se pudo abrir la webcam (ID 0)." << std::endl;
         return 1;
     }
-    std::cout << "📸 Imagen cargada: " << image_path << std::endl;
 
-    // 4. Preprocesado (Resize, BGR a RGB, y Padding SIMD)
-    cv::Mat resized_img, rgb_img;
-    cv::resize(frame, resized_img, cv::Size(320, 240));
-    cv::cvtColor(resized_img, rgb_img, cv::COLOR_BGR2RGB);
-
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 320);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 240);
+    cv::Mat frame, resized_img, rgb_img;
+    
     unsigned char x_z = active_schedule[0].x_zero;
-    std::vector<unsigned char> padded(320 * 240 * 16, x_z); 
+    std::vector<unsigned char> padded(320 * 240 * 16, x_z);
     std::vector<unsigned char> out(CPU_OUT_SIZE, 0);
 
-    int first_in_c = active_schedule[0].in_c; // Ahora es 4 gracias al padding
-    for (int y = 0; y < 240; ++y) {
-        for (int x = 0; x < 320; ++x) {
-            cv::Vec3b p = rgb_img.at<cv::Vec3b>(y, x);
-            int base = (y * 320 + x) * first_in_c;
-            padded[base + 0] = p[0]; 
-            padded[base + 1] = p[1]; 
-            padded[base + 2] = p[2]; 
-            if (first_in_c > 3) {
-                padded[base + 3] = x_z; 
+    std::cout << "🎥 Stream de video iniciado. Presiona 'q' en la ventana de OpenCV para salir." << std::endl;
+
+    while (true) {
+        cap >> frame; 
+        
+        if (frame.empty()) continue;
+
+        cv::resize(frame, resized_img, cv::Size(320, 240));
+        cv::cvtColor(resized_img, rgb_img, cv::COLOR_BGR2RGB);
+
+        std::fill(padded.begin(), padded.end(), x_z);
+        
+        // Relleno de imagen adaptado para SIMD x4
+        int first_in_c = active_schedule[0].in_c; 
+        
+        for (int y = 0; y < 240; ++y) {
+            for (int x = 0; x < 320; ++x) {
+                cv::Vec3b p = rgb_img.at<cv::Vec3b>(y, x);
+                int base = (y * 320 + x) * first_in_c;
+                padded[base + 0] = p[0]; 
+                padded[base + 1] = p[1]; 
+                padded[base + 2] = p[2]; 
+                if (first_in_c > 3) {
+                    padded[base + 3] = x_z; 
+                }
             }
+        }
+
+        double t_inicio = (double)cv::getTickCount();
+        
+        run_inference(padded.data(), padded.size(), out.data());
+        
+        double t_fin = (double)cv::getTickCount();
+        double tiempo_ms = (t_fin - t_inicio) * 1000.0 / cv::getTickFrequency();
+        std::cout << "⏱ Tiempo FPGA (SIMD x4): " << tiempo_ms << " ms (" << (1000.0/tiempo_ms) << " FPS)" << std::endl;
+
+        post_process_and_draw(frame, out.data());
+        cv::imshow("Deteccion Facial - FPGA SIMD", frame);
+
+        if (cv::waitKey(1) == 'q') {
+            break;
         }
     }
 
-    // 5. Inferencia
-    std::cout << "🧠 Ejecutando inferencia en hardware..." << std::endl;
-    double t_inicio = (double)cv::getTickCount();
-    
-    run_inference(padded.data(), padded.size(), out.data());
-    
-    double t_fin = (double)cv::getTickCount();
-    double tiempo_ms = (t_fin - t_inicio) * 1000.0 / cv::getTickFrequency();
-    std::cout << "⏱ Tiempo de ejecución (Host): " << tiempo_ms << " ms" << std::endl;
-    std::cout << "⚠️ Nota: En el emulador, este tiempo es falso (CPU host). En la FPGA real será el tiempo físico." << std::endl;
-
-    // 6. Postprocesado y visualización
-    post_process_and_draw(frame, out.data());
-    
-    std::cout << "🖼️ Mostrando resultados. Pulsa cualquier tecla en la ventana de la imagen para cerrar." << std::endl;
-    cv::imshow("Deteccion Facial - Prueba Estatica", frame);
-    cv::waitKey(0); // Se queda esperando a que pulses una tecla
-
+    cap.release();
     cv::destroyAllWindows();
     std::cout << "✅ Proceso Finalizado con Éxito." << std::endl;
     

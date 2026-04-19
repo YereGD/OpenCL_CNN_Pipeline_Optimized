@@ -12,7 +12,7 @@
 // ========================================================================
 #define MAX_DDR_BUFFER_SIZE (32 * 1024 * 1024) 
 #define CPU_OUT_SIZE (600 * 1024)              
-#define TILE_OUT_C 4 // TILING AJUSTADO PARA EL NUEVO MOTOR SIMD x4                         
+#define TILE_OUT_C 16 // Tiling sincronizado con el hardware                        
 
 struct FpgaOutput {
     int w, h, valid_channels;
@@ -22,7 +22,7 @@ struct FpgaOutput {
 };
 
 // ========================================================================
-// VARIABLES GLOBALES
+// VARIABLES GLOBALES DE OPENCL
 // ========================================================================
 cl_platform_id platform;
 cl_device_id device;
@@ -34,10 +34,8 @@ cl_kernel kernel_read, kernel_conv, kernel_write;
 cl_mem d_weights, d_bias;
 cl_mem d_buf_0, d_buf_1, d_buf_out;
 
-std::vector<ConvLayerDesc> active_schedule;
-
 // ========================================================================
-// FUNCIONES AUXILIARES Y PADDING DE HARDWARE
+// FUNCIONES AUXILIARES
 // ========================================================================
 std::vector<unsigned char> load_binary_file(const std::string& filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
@@ -49,49 +47,8 @@ std::vector<unsigned char> load_binary_file(const std::string& filename) {
     return buffer;
 }
 
-void pad_weights_for_simd(std::vector<unsigned char>& w_data) {
-    if (active_schedule[0].in_c % 4 == 0) return;
-
-    int orig_in_c = active_schedule[0].in_c; 
-    int pad_in_c = ((orig_in_c + 3) / 4) * 4; 
-    int out_c = active_schedule[0].out_c;
-    int w_zero = active_schedule[0].w_zero;
-    
-    int old_l0_size = out_c * 3 * 3 * orig_in_c;
-    int new_l0_size = out_c * 3 * 3 * pad_in_c;
-    
-    std::vector<unsigned char> new_w;
-    new_w.reserve(w_data.size() + (new_l0_size - old_l0_size));
-    
-    int old_idx = active_schedule[0].w_offset;
-    for (int oc = 0; oc < out_c; ++oc) {
-        for (int k = 0; k < 9; ++k) {
-            for (int ic = 0; ic < pad_in_c; ++ic) {
-                if (ic < orig_in_c) {
-                    new_w.push_back(w_data[old_idx++]);
-                } else {
-                    new_w.push_back(w_zero); 
-                }
-            }
-        }
-    }
-    
-    for (size_t i = old_l0_size; i < w_data.size(); ++i) {
-        new_w.push_back(w_data[i]);
-    }
-    
-    int offset_diff = new_l0_size - old_l0_size;
-    active_schedule[0].in_c = pad_in_c; 
-    for (size_t i = 1; i < active_schedule.size(); ++i) {
-        active_schedule[i].w_offset += offset_diff;
-    }
-    
-    w_data = std::move(new_w);
-    std::cout << "[HOST] SIMD Padding aplicado. Capa 0 expandida a " << pad_in_c << " canales." << std::endl;
-}
-
 // ========================================================================
-// INICIALIZACIÓN DE OPENCL (FPGA)
+// INICIALIZACIÓN DE OPENCL
 // ========================================================================
 void init_opencl_and_engine(unsigned char* w_data, int* b_data, size_t w_size, size_t b_size) {
     cl_int err;
@@ -104,7 +61,7 @@ void init_opencl_and_engine(unsigned char* w_data, int* b_data, size_t w_size, s
     queue_conv  = clCreateCommandQueue(context, device, 0, &err);
     queue_write = clCreateCommandQueue(context, device, 0, &err);
 
-    std::vector<unsigned char> binary = load_binary_file("engineCNN.aocx"); 
+    std::vector<unsigned char> binary = load_binary_file("engineCNN.aocx");
     size_t binary_size = binary.size();
     const unsigned char* binary_data = binary.data();
     
@@ -122,19 +79,19 @@ void init_opencl_and_engine(unsigned char* w_data, int* b_data, size_t w_size, s
     d_buf_1   = clCreateBuffer(context, CL_MEM_READ_WRITE, MAX_DDR_BUFFER_SIZE, NULL, &err);
     d_buf_out = clCreateBuffer(context, CL_MEM_WRITE_ONLY, CPU_OUT_SIZE, NULL, &err);
 
-    std::cout << "[HOST] Motor OpenCL SIMD y Tiling (" << TILE_OUT_C << ") Inicializados." << std::endl;
+    std::cout << "[HOST] Motor OpenCL y Tiling (" << TILE_OUT_C << ") Inicializados." << std::endl;
 }
 
 // ========================================================================
-// INFERENCIA EN HARDWARE
+// BUCLE DE INFERENCIA
 // ========================================================================
 void run_inference(unsigned char* input_data, size_t input_size, unsigned char* output_data) {
     clEnqueueWriteBuffer(queue_read, d_buf_0, CL_TRUE, 0, input_size, input_data, 0, NULL, NULL);
 
-    for (int i = 0; i < active_schedule.size(); i++) {
-        ConvLayerDesc layer = active_schedule[i]; 
-
-        std::cout << "  -> Emulando capa " << i << " / " << active_schedule.size() << "..." << std::endl;
+    for (int i = 0; i < TOTAL_LAYERS; i++) {
+        ConvLayerDesc layer = network_schedule[i];
+        
+        std::cout << "[HOST] Procesando capa " << i+1 << "/" << TOTAL_LAYERS << "\r" << std::flush;
 
         cl_mem mem_in  = (layer.buf_in == 0) ? d_buf_0 : d_buf_1;
         cl_mem mem_out = (layer.buf_out == 0) ? d_buf_0 : ((layer.buf_out == 1) ? d_buf_1 : d_buf_out);
@@ -142,6 +99,7 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
         for (int t = 0; t < layer.out_c; t += TILE_OUT_C) {
             int tile_channels = std::min((int)TILE_OUT_C, layer.out_c - t);
 
+            // A. Lectura
             clSetKernelArg(kernel_read, 0, sizeof(cl_mem), &mem_in);
             clSetKernelArg(kernel_read, 1, sizeof(int), &layer.in_offset);
             clSetKernelArg(kernel_read, 2, sizeof(int), &layer.w);
@@ -151,14 +109,15 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clSetKernelArg(kernel_read, 6, sizeof(int), &layer.pad);
             clSetKernelArg(kernel_read, 7, sizeof(unsigned char), &layer.x_zero);
 
+            // B. Convolución
             int w_off_bytes = layer.w_offset + (t * 3 * 3 * layer.in_c);
-            int b_off_index = (layer.b_offset / 4) + t;
+            int b_off_bytes = layer.b_offset + (t * 4);
             int y_zero_int  = layer.y_zero;
 
             clSetKernelArg(kernel_conv, 0, sizeof(cl_mem), &d_weights);
             clSetKernelArg(kernel_conv, 1, sizeof(cl_mem), &d_bias);
             clSetKernelArg(kernel_conv, 2, sizeof(int), &w_off_bytes);
-            clSetKernelArg(kernel_conv, 3, sizeof(int), &b_off_index);
+            clSetKernelArg(kernel_conv, 3, sizeof(int), &b_off_bytes);
             clSetKernelArg(kernel_conv, 4, sizeof(int), &layer.w);
             clSetKernelArg(kernel_conv, 5, sizeof(int), &layer.h);
             clSetKernelArg(kernel_conv, 6, sizeof(int), &layer.in_c);
@@ -171,6 +130,7 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clSetKernelArg(kernel_conv, 13, sizeof(int), &layer.M_multiplier);
             clSetKernelArg(kernel_conv, 14, sizeof(int), &layer.M_shift);
 
+            // C. Escritura
             clSetKernelArg(kernel_write, 0, sizeof(cl_mem), &mem_out);
             clSetKernelArg(kernel_write, 1, sizeof(int), &layer.out_offset);
             clSetKernelArg(kernel_write, 2, sizeof(int), &layer.w);
@@ -184,15 +144,15 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clEnqueueTask(queue_read, kernel_read, 0, NULL, NULL);
             clEnqueueTask(queue_conv, kernel_conv, 0, NULL, NULL);
             clEnqueueTask(queue_write, kernel_write, 0, NULL, NULL);
+            clFinish(queue_write);
         }
-        clFinish(queue_write);
     }
-
+    std::cout << std::endl;
     clEnqueueReadBuffer(queue_write, d_buf_out, CL_TRUE, 0, CPU_OUT_SIZE, output_data, 0, NULL, NULL);
 }
 
 // ========================================================================
-// NMS MANUAL Y POST-PROCESADO
+// NMS MANUAL
 // ========================================================================
 void custom_NMSBoxes(const std::vector<cv::Rect>& bboxes, const std::vector<float>& scores, 
                      float score_threshold, float nms_threshold, std::vector<int>& indices) {
@@ -232,11 +192,14 @@ void custom_NMSBoxes(const std::vector<cv::Rect>& bboxes, const std::vector<floa
     }
 }
 
+// ========================================================================
+// POST-PROCESADO: DECODIFICACIÓN
+// ========================================================================
 void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
     std::vector<FpgaOutput> all_outputs;
 
-    for (int i = 0; i < active_schedule.size(); i++) {
-        ConvLayerDesc layer = active_schedule[i];
+    for (int i = 0; i < TOTAL_LAYERS; i++) {
+        ConvLayerDesc layer = network_schedule[i];
         if (layer.buf_out == 2) {
             int out_w = (layer.w + 2 * layer.pad - 3) / layer.stride + 1;
             int out_h = (layer.h + 2 * layer.pad - 3) / layer.stride + 1;
@@ -264,7 +227,7 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
 
     std::vector<cv::Rect> bboxes;
     std::vector<float> scores;
-    float SCORE_THRESHOLD = 0.50f; 
+    float SCORE_THRESHOLD = 0.60f; // Umbral de confianza
     float NMS_THRESHOLD = 0.40f;
 
     std::vector<std::vector<int>> sizes = {{10, 16, 24}, {32, 48}, {64, 96}, {128, 192, 256}};
@@ -331,7 +294,6 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
     
     for (int idx : indices) {
         cv::rectangle(image, bboxes[idx], cv::Scalar(0, 255, 0), 2);
-        
         std::string label = cv::format("%.1f%%", scores[idx] * 100);
         cv::putText(image, label, cv::Point(bboxes[idx].x, bboxes[idx].y - 5), 
                     cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
@@ -339,72 +301,50 @@ void post_process_and_draw(cv::Mat& image, unsigned char* cpu_buffer) {
 }
 
 // ========================================================================
-// MAIN: PROCESADO DE UNA SOLA IMAGEN (PARA EMULADOR)
+// MAIN: PRUEBA CON IMAGEN ESTÁTICA
 // ========================================================================
 int main() {
-    std::cout << "🚀 INICIANDO MOTOR FPGA INT8 EN MODO IMAGEN ESTÁTICA..." << std::endl;
+    std::cout << " INICIANDO MOTOR FPGA INT8 (Prueba Imagen)..." << std::endl;
 
-    // 1. Clonar schedule y aplicar padding
-    active_schedule.assign(network_schedule, network_schedule + TOTAL_LAYERS);
     std::vector<unsigned char> rw = load_binary_file("weights.bin");
     std::vector<unsigned char> rb = load_binary_file("bias.bin");
-    pad_weights_for_simd(rw);
     
-    // 2. Inicializar OpenCL
     init_opencl_and_engine(rw.data(), (int*)rb.data(), rw.size(), rb.size());
 
-    // 3. Cargar la imagen de prueba (¡Cambia el nombre si es necesario!)
-    std::string image_path = "images.jpeg"; 
-    cv::Mat frame = cv::imread(image_path);
+    // Cargar imagen de prueba
+    cv::Mat frame = cv::imread("images.jpeg");
     if (frame.empty()) {
-        std::cerr << "❌ Error: No se pudo cargar la imagen: " << image_path << std::endl;
+        std::cerr << "❌ Error: No se encuentra 'images.jpeg' en la carpeta." << std::endl;
         return 1;
     }
-    std::cout << "📸 Imagen cargada: " << image_path << std::endl;
 
-    // 4. Preprocesado (Resize, BGR a RGB, y Padding SIMD)
     cv::Mat resized_img, rgb_img;
     cv::resize(frame, resized_img, cv::Size(320, 240));
     cv::cvtColor(resized_img, rgb_img, cv::COLOR_BGR2RGB);
 
-    unsigned char x_z = active_schedule[0].x_zero;
-    std::vector<unsigned char> padded(320 * 240 * 16, x_z); 
+    unsigned char x_z = network_schedule[0].x_zero;
+    std::vector<unsigned char> padded(320 * 240 * 16, x_z);
     std::vector<unsigned char> out(CPU_OUT_SIZE, 0);
 
-    int first_in_c = active_schedule[0].in_c; // Ahora es 4 gracias al padding
+    int first_in_c = network_schedule[0].in_c; // Esto valdrá 3
     for (int y = 0; y < 240; ++y) {
         for (int x = 0; x < 320; ++x) {
             cv::Vec3b p = rgb_img.at<cv::Vec3b>(y, x);
-            int base = (y * 320 + x) * first_in_c;
+            int base = (y * 320 + x) * first_in_c; // Ahora los píxeles van pegados
             padded[base + 0] = p[0]; 
             padded[base + 1] = p[1]; 
             padded[base + 2] = p[2]; 
-            if (first_in_c > 3) {
-                padded[base + 3] = x_z; 
-            }
         }
     }
 
-    // 5. Inferencia
-    std::cout << "🧠 Ejecutando inferencia en hardware..." << std::endl;
-    double t_inicio = (double)cv::getTickCount();
-    
+    // Inferencia y postprocesado
     run_inference(padded.data(), padded.size(), out.data());
-    
-    double t_fin = (double)cv::getTickCount();
-    double tiempo_ms = (t_fin - t_inicio) * 1000.0 / cv::getTickFrequency();
-    std::cout << "⏱ Tiempo de ejecución (Host): " << tiempo_ms << " ms" << std::endl;
-    std::cout << "⚠️ Nota: En el emulador, este tiempo es falso (CPU host). En la FPGA real será el tiempo físico." << std::endl;
-
-    // 6. Postprocesado y visualización
     post_process_and_draw(frame, out.data());
-    
-    std::cout << "🖼️ Mostrando resultados. Pulsa cualquier tecla en la ventana de la imagen para cerrar." << std::endl;
-    cv::imshow("Deteccion Facial - Prueba Estatica", frame);
-    cv::waitKey(0); // Se queda esperando a que pulses una tecla
 
-    cv::destroyAllWindows();
-    std::cout << "✅ Proceso Finalizado con Éxito." << std::endl;
+    // Guardar imagen en disco
+    cv::imwrite("resultado_final.jpg", frame);
+    std::cout << " Imagen guardada como 'resultado_final.jpg'" << std::endl;
+    std::cout << " Proceso Finalizado con Éxito." << std::endl;
     
     return 0;
 }
