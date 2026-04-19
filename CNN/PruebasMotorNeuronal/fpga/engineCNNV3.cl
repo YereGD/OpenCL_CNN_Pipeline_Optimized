@@ -1,12 +1,21 @@
 #pragma OPENCL EXTENSION cl_intel_channels : enable
 
-// ¡TU IDEA ERA LA CORRECTA! El tamaño perfecto para la DE10-Nano
-#define TILE_OUT_C 4
-
+// EL PUNTO DULCE: TILING 8
+#define TILE_OUT_C 8
 #define MAX_WEIGHT_ITERS 1152 
 
 channel uchar4 ch_in __attribute__((depth(32)));
-channel uchar4 ch_out __attribute__((depth(32))); 
+// ¡EL MISIL! Canal ensanchado a 8 bytes (64 bits) por ciclo
+channel uchar8 ch_out __attribute__((depth(32))); 
+
+// Función de cuantización
+inline uchar quantize(int acc, int b, int M_mult, int M_shift, int y_zero) {
+    long long res_q = (long long)(acc + b) * M_mult;
+    int res_shifted = (int)(res_q >> M_shift) + y_zero;
+    if (res_shifted < 0) return 0;
+    if (res_shifted > 255) return 255;
+    return (uchar)res_shifted;
+}
 
 // =========================================================================
 // KERNEL 1: GENERADOR DE VENTANAS
@@ -52,7 +61,7 @@ __kernel void mem_read_generic(
 }
 
 // =========================================================================
-// KERNEL 2: MOTOR MATEMÁTICO (Caché BRAM y 16 MACs fluidos)
+// KERNEL 2: MOTOR MATEMÁTICO (Un Solo Disparo)
 // =========================================================================
 __kernel void conv_generic(
     __global const uchar4* restrict weights_vec __attribute__((aligned(64))),
@@ -67,28 +76,47 @@ __kernel void conv_generic(
     int out_h = (h + 2 * pad - 3) / stride + 1;
     int total_inner_iters = 9 * vec_c;
 
-    __local uchar4 local_w[MAX_WEIGHT_ITERS][TILE_OUT_C];
-    __local int local_b[TILE_OUT_C];
+    // 8 Memorias físicas 100% aisladas
+    __local uchar4 local_w_0[MAX_WEIGHT_ITERS];
+    __local uchar4 local_w_1[MAX_WEIGHT_ITERS];
+    __local uchar4 local_w_2[MAX_WEIGHT_ITERS];
+    __local uchar4 local_w_3[MAX_WEIGHT_ITERS];
+    __local uchar4 local_w_4[MAX_WEIGHT_ITERS];
+    __local uchar4 local_w_5[MAX_WEIGHT_ITERS];
+    __local uchar4 local_w_6[MAX_WEIGHT_ITERS];
+    __local uchar4 local_w_7[MAX_WEIGHT_ITERS];
+
+    int local_b_0 = (0 < tile_channels) ? bias[b_off_ints + 0] : 0;
+    int local_b_1 = (1 < tile_channels) ? bias[b_off_ints + 1] : 0;
+    int local_b_2 = (2 < tile_channels) ? bias[b_off_ints + 2] : 0;
+    int local_b_3 = (3 < tile_channels) ? bias[b_off_ints + 3] : 0;
+    int local_b_4 = (4 < tile_channels) ? bias[b_off_ints + 4] : 0;
+    int local_b_5 = (5 < tile_channels) ? bias[b_off_ints + 5] : 0;
+    int local_b_6 = (6 < tile_channels) ? bias[b_off_ints + 6] : 0;
+    int local_b_7 = (7 < tile_channels) ? bias[b_off_ints + 7] : 0;
 
     for (int oc = 0; oc < TILE_OUT_C; oc++) {
-        if (oc < tile_channels) local_b[oc] = bias[b_off_ints + oc];
-        else local_b[oc] = 0;
-
         int base = w_off_vec + (oc * total_inner_iters);
         for (int i = 0; i < total_inner_iters; i++) {
-            if (i < MAX_WEIGHT_ITERS) {
-                local_w[i][oc] = (oc < tile_channels) ? weights_vec[base + i] : (uchar4)(w_zero, w_zero, w_zero, w_zero);
-            }
+            uchar4 w_val = (oc < tile_channels) ? weights_vec[base + i] : (uchar4)(w_zero, w_zero, w_zero, w_zero);
+            if (oc == 0) local_w_0[i] = w_val;
+            else if (oc == 1) local_w_1[i] = w_val;
+            else if (oc == 2) local_w_2[i] = w_val;
+            else if (oc == 3) local_w_3[i] = w_val;
+            else if (oc == 4) local_w_4[i] = w_val;
+            else if (oc == 5) local_w_5[i] = w_val;
+            else if (oc == 6) local_w_6[i] = w_val;
+            else if (oc == 7) local_w_7[i] = w_val;
         }
     }
+
+    short w_zero_s = (short)w_zero;
 
     for (int y = 0; y < out_h; y++) {
         for (int x = 0; x < out_w; x++) {
             
-            int acc[TILE_OUT_C];
-            
-            #pragma unroll
-            for(int oc = 0; oc < TILE_OUT_C; oc++) acc[oc] = 0;
+            int acc0 = 0, acc1 = 0, acc2 = 0, acc3 = 0;
+            int acc4 = 0, acc5 = 0, acc6 = 0, acc7 = 0;
 
             for (int i = 0; i < total_inner_iters; i++) { 
                 uchar4 vector_in = read_channel_intel(ch_in);
@@ -98,39 +126,44 @@ __kernel void conv_generic(
                 short p2 = (short)vector_in.s2 - (short)x_zero;
                 short p3 = (short)vector_in.s3 - (short)x_zero;
 
-                #pragma unroll
-                for (int oc = 0; oc < TILE_OUT_C; oc++) {
-                    
-                    uchar4 w_vec = local_w[i][oc];
-                    
-                    short w0 = (short)w_vec.s0 - (short)w_zero;
-                    short w1 = (short)w_vec.s1 - (short)w_zero;
-                    short w2 = (short)w_vec.s2 - (short)w_zero;
-                    short w3 = (short)w_vec.s3 - (short)w_zero;
+                uchar4 w_vec_0 = local_w_0[i];
+                acc0 += (int)(p0 * ((short)w_vec_0.s0 - w_zero_s)) + (int)(p1 * ((short)w_vec_0.s1 - w_zero_s)) + (int)(p2 * ((short)w_vec_0.s2 - w_zero_s)) + (int)(p3 * ((short)w_vec_0.s3 - w_zero_s));
 
-                    acc[oc] += (int)(p0 * w0) + (int)(p1 * w1) + (int)(p2 * w2) + (int)(p3 * w3);
-                }
+                uchar4 w_vec_1 = local_w_1[i];
+                acc1 += (int)(p0 * ((short)w_vec_1.s0 - w_zero_s)) + (int)(p1 * ((short)w_vec_1.s1 - w_zero_s)) + (int)(p2 * ((short)w_vec_1.s2 - w_zero_s)) + (int)(p3 * ((short)w_vec_1.s3 - w_zero_s));
+
+                uchar4 w_vec_2 = local_w_2[i];
+                acc2 += (int)(p0 * ((short)w_vec_2.s0 - w_zero_s)) + (int)(p1 * ((short)w_vec_2.s1 - w_zero_s)) + (int)(p2 * ((short)w_vec_2.s2 - w_zero_s)) + (int)(p3 * ((short)w_vec_2.s3 - w_zero_s));
+
+                uchar4 w_vec_3 = local_w_3[i];
+                acc3 += (int)(p0 * ((short)w_vec_3.s0 - w_zero_s)) + (int)(p1 * ((short)w_vec_3.s1 - w_zero_s)) + (int)(p2 * ((short)w_vec_3.s2 - w_zero_s)) + (int)(p3 * ((short)w_vec_3.s3 - w_zero_s));
+
+                uchar4 w_vec_4 = local_w_4[i];
+                acc4 += (int)(p0 * ((short)w_vec_4.s0 - w_zero_s)) + (int)(p1 * ((short)w_vec_4.s1 - w_zero_s)) + (int)(p2 * ((short)w_vec_4.s2 - w_zero_s)) + (int)(p3 * ((short)w_vec_4.s3 - w_zero_s));
+
+                uchar4 w_vec_5 = local_w_5[i];
+                acc5 += (int)(p0 * ((short)w_vec_5.s0 - w_zero_s)) + (int)(p1 * ((short)w_vec_5.s1 - w_zero_s)) + (int)(p2 * ((short)w_vec_5.s2 - w_zero_s)) + (int)(p3 * ((short)w_vec_5.s3 - w_zero_s));
+
+                uchar4 w_vec_6 = local_w_6[i];
+                acc6 += (int)(p0 * ((short)w_vec_6.s0 - w_zero_s)) + (int)(p1 * ((short)w_vec_6.s1 - w_zero_s)) + (int)(p2 * ((short)w_vec_6.s2 - w_zero_s)) + (int)(p3 * ((short)w_vec_6.s3 - w_zero_s));
+
+                uchar4 w_vec_7 = local_w_7[i];
+                acc7 += (int)(p0 * ((short)w_vec_7.s0 - w_zero_s)) + (int)(p1 * ((short)w_vec_7.s1 - w_zero_s)) + (int)(p2 * ((short)w_vec_7.s2 - w_zero_s)) + (int)(p3 * ((short)w_vec_7.s3 - w_zero_s));
             }
 
-            // Un solo disparo limpio a la tubería (sin bucles extra)
-            uchar4 out_vec = (uchar4)(0, 0, 0, 0);
+            // UNA SOLA ESCRITURA: Empaquetamos todo en el uchar8 gigante
+            uchar8 out_vec = (uchar8)(0, 0, 0, 0, 0, 0, 0, 0);
             
-            #pragma unroll
-            for (int oc = 0; oc < TILE_OUT_C; oc++) {
-                int res = acc[oc] + local_b[oc];
-                long long res_q = (long long)res * M_mult;
-                int res_shifted = (int)(res_q >> M_shift) + y_zero;
-                
-                uchar final_val;
-                if (res_shifted < 0) final_val = 0;
-                else if (res_shifted > 255) final_val = 255;
-                else final_val = (uchar)res_shifted;
-
-                if (oc == 0) out_vec.s0 = final_val;
-                if (oc == 1) out_vec.s1 = final_val;
-                if (oc == 2) out_vec.s2 = final_val;
-                if (oc == 3) out_vec.s3 = final_val;
-            }
+            out_vec.s0 = (0 < tile_channels) ? quantize(acc0, local_b_0, M_mult, M_shift, y_zero) : 0;
+            out_vec.s1 = (1 < tile_channels) ? quantize(acc1, local_b_1, M_mult, M_shift, y_zero) : 0;
+            out_vec.s2 = (2 < tile_channels) ? quantize(acc2, local_b_2, M_mult, M_shift, y_zero) : 0;
+            out_vec.s3 = (3 < tile_channels) ? quantize(acc3, local_b_3, M_mult, M_shift, y_zero) : 0;
+            out_vec.s4 = (4 < tile_channels) ? quantize(acc4, local_b_4, M_mult, M_shift, y_zero) : 0;
+            out_vec.s5 = (5 < tile_channels) ? quantize(acc5, local_b_5, M_mult, M_shift, y_zero) : 0;
+            out_vec.s6 = (6 < tile_channels) ? quantize(acc6, local_b_6, M_mult, M_shift, y_zero) : 0;
+            out_vec.s7 = (7 < tile_channels) ? quantize(acc7, local_b_7, M_mult, M_shift, y_zero) : 0;
+            
+            // Disparo limpio, sin multiplexores
             write_channel_intel(ch_out, out_vec);
         }
     }
@@ -150,15 +183,19 @@ __kernel void mem_write_generic(
     for (int y = 0; y < out_h; y++) {
         for (int x = 0; x < out_w; x++) {
             
-            // Una sola lectura limpia
-            uchar4 val_vec = read_channel_intel(ch_out);
+            // UNA SOLA LECTURA
+            uchar8 val_vec = read_channel_intel(ch_out);
             int base_idx = out_offset + (y * out_w * out_c) + (x * out_c) + t_offset;
 
-            // Escrituras seguras protegidas por tile_channels
+            // Escrituras seguras y directas
             if (tile_channels > 0) mem_out[base_idx + 0] = val_vec.s0;
             if (tile_channels > 1) mem_out[base_idx + 1] = val_vec.s1;
             if (tile_channels > 2) mem_out[base_idx + 2] = val_vec.s2;
             if (tile_channels > 3) mem_out[base_idx + 3] = val_vec.s3;
+            if (tile_channels > 4) mem_out[base_idx + 4] = val_vec.s4;
+            if (tile_channels > 5) mem_out[base_idx + 5] = val_vec.s5;
+            if (tile_channels > 6) mem_out[base_idx + 6] = val_vec.s6;
+            if (tile_channels > 7) mem_out[base_idx + 7] = val_vec.s7;
         }
     }
 }

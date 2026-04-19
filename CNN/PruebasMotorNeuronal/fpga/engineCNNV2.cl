@@ -39,7 +39,7 @@ __kernel void mem_read_generic(
                     bool out_of_bounds = (iy < 0 || iy >= h || ix < 0 || ix >= w);
                     int base_idx = in_offset + iy * w_in_c + ix * in_c;
                     
-                    // 🔥 ARREGLO KERNEL 1: Un solo canal de escritura. Cero condicionales complejos.
+                    // ARREGLO KERNEL 1: Un solo canal de escritura. Cero condicionales complejos.
                     #pragma unroll 1
                     for (int c = 0; c < in_c; c++) {
                         uchar val_to_write = x_zero;
