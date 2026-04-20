@@ -2,59 +2,66 @@
 
 #define TILE_OUT_C 8
 #define MAX_WEIGHT_ITERS 576 
+#define MAX_ROW_VECS 1280 // ¡Calculado matemáticamente para tu red! Ocupa solo 15KB.
 
 channel uchar4 ch_in __attribute__((depth(16)));
 channel uchar8 ch_out __attribute__((depth(16))); 
 
 // =========================================================================
-// KERNEL 1: GENERADOR DE VENTANAS (Bucle plano + Cero Divisores)
+// KERNEL 1: SMART CACHE (Burst Read + BRAM Line Buffer)
 // =========================================================================
 __attribute__((max_global_work_dim(0))) 
 __kernel void mem_read_generic(
     __global const uchar4* restrict mem_in __attribute__((aligned(64))),
     int in_offset_bytes, int w, int h, int in_c, int stride, int pad, uchar x_zero) 
 {
-    // Cambiamos divisiones estáticas por Bit-Shifts seguros
+    // ¡CORREGIDO! Declaración de memoria local en el ámbito (scope) del Kernel
+    __local uchar4 row_cache[3][MAX_ROW_VECS];
+
     int in_offset_vec = in_offset_bytes >> 2; 
     int vec_c = in_c >> 2; 
     int w_vec_c = w * vec_c; 
     
-    // EXTERMINIO DEL DIVISOR: Shift en lugar de división
     int tmp_w = w + 2 * pad - 3;
     int tmp_h = h + 2 * pad - 3;
     int out_w = (stride == 2 ? (tmp_w >> 1) : tmp_w) + 1;
     int out_h = (stride == 2 ? (tmp_h >> 1) : tmp_h) + 1;
-    int total_inner_iters = 9 * vec_c;
 
     for (int y = 0; y < out_h; y++) {
-        // EXTERMINIO DEL MULTIPLICADOR: Shift en lugar de multiplicación
         int base_y = (stride == 2 ? (y << 1) : y) - pad;
         
+        // 1. BURST READ: Leer 3 filas completas de la DDR3 de golpe
+        for (int ky = 0; ky < 3; ky++) {
+            int in_y = base_y + ky;
+            bool y_valid = (in_y >= 0 && in_y < h);
+            int base_idx_y = in_offset_vec + in_y * w_vec_c;
+
+            // Esta lectura continua es un orgasmo para el controlador de memoria DDR3
+            for (int i = 0; i < w_vec_c; i++) {
+                row_cache[ky][i] = y_valid ? mem_in[base_idx_y + i] : (uchar4)(x_zero, x_zero, x_zero, x_zero);
+            }
+        }
+
+        // 2. FEED THE PIPELINE: Alimentar el motor desde la BRAM a latencia 0
         for (int x = 0; x < out_w; x++) {
             int base_x = (stride == 2 ? (x << 1) : x) - pad;
-            int c = 0, kx = 0, ky = 0;
 
-            // Bucle plano: Elimina el "Warning Cannot unroll" y fluye perfectamente
             #pragma unroll 1
-            for (int i = 0; i < total_inner_iters; i++) {
-                int in_y = base_y + ky; 
-                int in_x = base_x + kx;
-                bool is_pad = (in_y < 0 || in_y >= h || in_x < 0 || in_x >= w);
-                
-                uchar4 val;
-                if (is_pad) {
-                    val = (uchar4)(x_zero, x_zero, x_zero, x_zero);
-                } else {
-                    int base_idx = in_offset_vec + in_y * w_vec_c + in_x * vec_c + c;
-                    val = mem_in[base_idx]; 
-                }
-                
-                write_channel_intel(ch_in, val); 
-                
-                c++;
-                if (c == vec_c) {
-                    c = 0; kx++;
-                    if (kx == 3) { kx = 0; ky++; }
+            for (int ky = 0; ky < 3; ky++) {
+                #pragma unroll 1
+                for (int kx = 0; kx < 3; kx++) {
+                    int in_x = base_x + kx;
+                    bool x_valid = (in_x >= 0 && in_x < w);
+                    
+                    for (int c = 0; c < vec_c; c++) {
+                        uchar4 val;
+                        if (x_valid) {
+                            val = row_cache[ky][in_x * vec_c + c];
+                        } else {
+                            val = (uchar4)(x_zero, x_zero, x_zero, x_zero);
+                        }
+                        write_channel_intel(ch_in, val); 
+                    }
                 }
             }
         }
@@ -62,7 +69,7 @@ __kernel void mem_read_generic(
 }
 
 // =========================================================================
-// KERNEL 2: MOTOR MATEMÁTICO (DSPs nativos y BRAM aislada)
+// KERNEL 2: MOTOR MATEMÁTICO (Matemática Exacta Restaurada)
 // =========================================================================
 __attribute__((max_global_work_dim(0))) 
 __kernel void conv_generic(
@@ -75,7 +82,6 @@ __kernel void conv_generic(
     int vec_c = in_c >> 2; 
     int w_off_vec = w_off_bytes >> 2; 
     
-    // EXTERMINIO DEL DIVISOR
     int tmp_w = w + 2 * pad - 3;
     int tmp_h = h + 2 * pad - 3;
     int out_w = (stride == 2 ? (tmp_w >> 1) : tmp_w) + 1;
@@ -135,7 +141,6 @@ __kernel void conv_generic(
 
                 uchar4 w;
 
-                // Esta es la sintaxis exacta que Intel mapea nativamente a DSPs de 18x18
                 w = local_w_0[i]; acc0 += (int)(p0 * ((short)w.s0 - wz)) + (int)(p1 * ((short)w.s1 - wz)) + (int)(p2 * ((short)w.s2 - wz)) + (int)(p3 * ((short)w.s3 - wz));
                 w = local_w_1[i]; acc1 += (int)(p0 * ((short)w.s0 - wz)) + (int)(p1 * ((short)w.s1 - wz)) + (int)(p2 * ((short)w.s2 - wz)) + (int)(p3 * ((short)w.s3 - wz));
                 w = local_w_2[i]; acc2 += (int)(p0 * ((short)w.s0 - wz)) + (int)(p1 * ((short)w.s1 - wz)) + (int)(p2 * ((short)w.s2 - wz)) + (int)(p3 * ((short)w.s3 - wz));
@@ -149,11 +154,10 @@ __kernel void conv_generic(
             int acc_array[8] = {acc0, acc1, acc2, acc3, acc4, acc5, acc6, acc7};
             uchar q_out[8];
 
-            // Cuantización reciclada y limpia (Ahorro brutal de ALUTs)
             #pragma unroll 1 
             for (int oc = 0; oc < 8; oc++) {
                 long long res_q = (long long)(acc_array[oc]) * M_mult;
-                int res_shifted = (int)(res_q >> M_shift) + y_zero;
+                int res_shifted = (int)((res_q + (1LL << (M_shift - 1))) >> M_shift) + y_zero;
                 
                 if (res_shifted < 0) res_shifted = 0;
                 else if (res_shifted > 255) res_shifted = 255;
@@ -178,7 +182,6 @@ __kernel void mem_write_generic(
     int out_offset, int w, int h, int out_c, int tile_channels, int t_offset,
     int stride, int pad)
 {
-    // EXTERMINIO DEL DIVISOR FINAL
     int tmp_w = w + 2 * pad - 3;
     int tmp_h = h + 2 * pad - 3;
     int out_w = (stride == 2 ? (tmp_w >> 1) : tmp_w) + 1;

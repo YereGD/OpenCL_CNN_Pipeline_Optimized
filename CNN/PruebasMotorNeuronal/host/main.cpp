@@ -12,7 +12,7 @@
 // ========================================================================
 #define MAX_DDR_BUFFER_SIZE (32 * 1024 * 1024) 
 #define CPU_OUT_SIZE (600 * 1024)              
-#define TILE_OUT_C 4 // TILING AJUSTADO PARA EL NUEVO MOTOR SIMD x4                         
+#define TILE_OUT_C 8 // TILING AJUSTADO PARA EL NUEVO MOTOR SIMD x4                         
 
 struct FpgaOutput {
     int w, h, valid_channels;
