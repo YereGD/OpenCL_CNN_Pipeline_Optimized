@@ -8,15 +8,15 @@ channel uchar4 ch_in __attribute__((depth(16)));
 channel uchar8 ch_out __attribute__((depth(16))); 
 
 // =========================================================================
-// KERNEL 1: SMART CACHE (Burst Read + BRAM Line Buffer)
+// KERNEL 1: PING-PONG SMART CACHE (Flujo Continuo, Stall 0%)
 // =========================================================================
 __attribute__((max_global_work_dim(0))) 
 __kernel void mem_read_generic(
     __global const uchar4* restrict mem_in __attribute__((aligned(64))),
     int in_offset_bytes, int w, int h, int in_c, int stride, int pad, uchar x_zero) 
 {
-    // ¡CORREGIDO! Declaración de memoria local en el ámbito (scope) del Kernel
-    __local uchar4 row_cache[3][MAX_ROW_VECS];
+    // ¡DOBLE CACHÉ! Mientras el motor lee de una, llenamos la otra.
+    __local uchar4 ping_pong[2][3][MAX_ROW_VECS];
 
     int in_offset_vec = in_offset_bytes >> 2; 
     int vec_c = in_c >> 2; 
@@ -27,40 +27,67 @@ __kernel void mem_read_generic(
     int out_w = (stride == 2 ? (tmp_w >> 1) : tmp_w) + 1;
     int out_h = (stride == 2 ? (tmp_h >> 1) : tmp_h) + 1;
 
-    for (int y = 0; y < out_h; y++) {
-        int base_y = (stride == 2 ? (y << 1) : y) - pad;
-        
-        // 1. BURST READ: Leer 3 filas completas de la DDR3 de golpe
-        for (int ky = 0; ky < 3; ky++) {
-            int in_y = base_y + ky;
-            bool y_valid = (in_y >= 0 && in_y < h);
-            int base_idx_y = in_offset_vec + in_y * w_vec_c;
+    // --- FASE 0: PRE-FETCH (Llenamos el Buffer 0 antes de arrancar) ---
+    int base_y_pre = (stride == 2 ? (0 << 1) : 0) - pad;
+    for (int ky = 0; ky < 3; ky++) {
+        int in_y = base_y_pre + ky;
+        bool y_valid = (in_y >= 0 && in_y < h);
+        int base_idx_y = in_offset_vec + in_y * w_vec_c;
 
-            // Esta lectura continua es un orgasmo para el controlador de memoria DDR3
-            for (int i = 0; i < w_vec_c; i++) {
-                row_cache[ky][i] = y_valid ? mem_in[base_idx_y + i] : (uchar4)(x_zero, x_zero, x_zero, x_zero);
+        for (int i = 0; i < w_vec_c; i++) {
+            ping_pong[0][ky][i] = y_valid ? mem_in[base_idx_y + i] : (uchar4)(x_zero, x_zero, x_zero, x_zero);
+        }
+    }
+
+    // --- FASE 1: BUCLE PRINCIPAL (El Ping-Pong) ---
+    for (int y = 0; y < out_h; y++) {
+        
+        // El operador bitwise (& 1) es muchísimo más rápido que el módulo (%) en hardware
+        int buf_read  = y & 1;          // El motor traga de aquí
+        int buf_write = (y + 1) & 1;    // Vamos rellenando aquí para la próxima vuelta
+        
+        int next_y = y + 1;
+
+        // ACCIÓN A: Llenar el siguiente buffer (Ocurre MIENTRAS el motor calcula)
+        if (next_y < out_h) {
+            int base_y_next = (stride == 2 ? (next_y << 1) : next_y) - pad;
+            for (int ky = 0; ky < 3; ky++) {
+                int in_y = base_y_next + ky;
+                bool y_valid = (in_y >= 0 && in_y < h);
+                int base_idx_y = in_offset_vec + in_y * w_vec_c;
+
+                for (int i = 0; i < w_vec_c; i++) {
+                    ping_pong[buf_write][ky][i] = y_valid ? mem_in[base_idx_y + i] : (uchar4)(x_zero, x_zero, x_zero, x_zero);
+                }
             }
         }
 
-        // 2. FEED THE PIPELINE: Alimentar el motor desde la BRAM a latencia 0
-        for (int x = 0; x < out_w; x++) {
-            int base_x = (stride == 2 ? (x << 1) : x) - pad;
-
-            #pragma unroll 1
-            for (int ky = 0; ky < 3; ky++) {
-                #pragma unroll 1
-                for (int kx = 0; kx < 3; kx++) {
-                    int in_x = base_x + kx;
-                    bool x_valid = (in_x >= 0 && in_x < w);
-                    
-                    for (int c = 0; c < vec_c; c++) {
-                        uchar4 val;
-                        if (x_valid) {
-                            val = row_cache[ky][in_x * vec_c + c];
-                        } else {
-                            val = (uchar4)(x_zero, x_zero, x_zero, x_zero);
-                        }
-                        write_channel_intel(ch_in, val); 
+        // ACCIÓN B: Alimentar al Motor (Bucle 100% Aplanado = 0 Burbujas)
+        int total_feed_iters = out_w * 9 * vec_c;
+        int px = 0, kx = 0, ky = 0, c = 0;
+        
+        #pragma unroll 1
+        for(int i = 0; i < total_feed_iters; i++) {
+            int base_x = (stride == 2 ? (px << 1) : px) - pad;
+            int in_x = base_x + kx;
+            bool x_valid = (in_x >= 0 && in_x < w);
+            
+            uchar4 val;
+            if (x_valid) {
+                val = ping_pong[buf_read][ky][in_x * vec_c + c];
+            } else {
+                val = (uchar4)(x_zero, x_zero, x_zero, x_zero);
+            }
+            write_channel_intel(ch_in, val); 
+            
+            // Relojes matemáticos perfectos (sin bucles anidados que frenen el pipeline)
+            c++;
+            if (c == vec_c) {
+                c = 0; kx++;
+                if (kx == 3) { 
+                    kx = 0; ky++; 
+                    if (ky == 3) {
+                        ky = 0; px++;
                     }
                 }
             }

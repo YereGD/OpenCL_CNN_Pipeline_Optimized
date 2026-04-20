@@ -185,9 +185,8 @@ void run_inference(unsigned char* input_data, size_t input_size, unsigned char* 
             clEnqueueTask(queue_conv, kernel_conv, 0, NULL, NULL);
             clEnqueueTask(queue_write, kernel_write, 0, NULL, NULL);
         }
-        clFinish(queue_write);
     }
-
+    clFinish(queue_write);
     clEnqueueReadBuffer(queue_write, d_buf_out, CL_TRUE, 0, CPU_OUT_SIZE, output_data, 0, NULL, NULL);
 }
 
