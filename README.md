@@ -1,8 +1,8 @@
-# FPGA_OpenCL_Convolutional_Processo
+# FPGA_OpenCL_Convolutional_Processor LINA
 
 ## Sobre el Proyecto
 
-Este proyecto presenta el diseño, desarrollo e implementación de un **computador empotrado ligero de altas prestaciones y alta eficiencia energética** basado en una arquitectura System on Chip (SoC) reconfigurable. Desarrollado sobre la placa **Terasic DE1-SoC** (que integra un chip Intel Cyclone V SoC), el sistema está especializado en la ejecución en tiempo real de una red neuronal convolucional (CNN) optimizada para la **detección de caras humanas** a través de una cámara web estándar.
+Este proyecto presenta el diseño, desarrollo e implementación de un **computador empotrado ligero de altas prestaciones y alta eficiencia energética**, de nombre Lina, basado en una arquitectura System on Chip (SoC) reconfigurable. Desarrollado sobre la placa **Terasic DE1-SoC** (que integra un chip Intel Cyclone V SoC), el sistema está especializado en la ejecución en tiempo real de una red neuronal convolucional (CNN) optimizada para la **detección de caras humanas** a través de una cámara web estándar.
 
 Para superar el severo cuello de botella de acceso a memoria externa y las limitaciones características de los dispositivos en el extremo (*Edge AI*), este trabajo propone un **co-diseño hardware-software a medida** que trasciende las soluciones convencionales de propósito general:
 
